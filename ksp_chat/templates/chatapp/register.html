@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register — Document Chat</title>
+    <link rel="stylesheet" href="{% static 'chatapp/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'chatapp/css/auth.css' %}">
+</head>
+<body class="auth-body">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1 class="auth-title">Document Chat</h1>
+            <p class="auth-subtitle">Create a new account</p>
+        </div>
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+
+            {% if form.errors %}
+                <div class="auth-error">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="auth-field">
+                <label for="id_username">Username</label>
+                <input type="text" name="username" id="id_username"
+                       autofocus autocomplete="username" required
+                       maxlength="150">
+            </div>
+
+            <div class="auth-field">
+                <label for="id_password1">Password</label>
+                <input type="password" name="password1" id="id_password1"
+                       autocomplete="new-password" required>
+            </div>
+
+            <div class="auth-field">
+                <label for="id_password2">Confirm password</label>
+                <input type="password" name="password2" id="id_password2"
+                       autocomplete="new-password" required>
+            </div>
+
+            <p class="auth-hint">
+                Password must be at least 8 characters and not entirely numeric.
+            </p>
+
+            <button type="submit" class="auth-btn">Create account</button>
+        </form>
+
+        <p class="auth-switch">
+            Already have an account? <a href="{% url 'login' %}">Sign in</a>
+        </p>
+    </div>
+    <script>
+        const t = localStorage.getItem("theme");
+        if (t === "dark") document.documentElement.setAttribute("data-theme", "dark");
+    </script>
+</body>
+</html>

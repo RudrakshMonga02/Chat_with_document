@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Chat</title>
+    <link rel="stylesheet" href="{% static 'chatapp/css/style.css' %}">
+</head>
+<body>
+    {% csrf_token %}
+
+    <button class="toggle-btn" id="toggle-btn" title="Toggle sidebar">&#8942;</button>
+
+    <div class="layout" id="layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-title">Chats</span>
+            </div>
+            <div class="sidebar-body">
+                <button class="new-chat-btn" id="new-chat-btn">+ New chat</button>
+                <div class="session-list" id="session-list">
+                    {% for s in sessions %}
+                        <div class="session-item {% if s.session_key == active_session_key %}active{% endif %}"
+                             data-key="{{ s.session_key }}" data-title="{{ s.title }}">
+                            <span class="session-icon">💬</span>
+                            <span class="session-label">{{ s.title|truncatechars:22 }}</span>
+                            <button class="session-menu-btn"
+                                    data-key="{{ s.session_key }}"
+                                    data-title="{{ s.title }}"
+                                    title="Options">&#8942;</button>
+                        </div>
+                    {% empty %}
+                        <p class="sidebar-hint">Your chats will appear here.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <div class="main" id="main">
+
+            <!-- Top bar: document dropdown + add button + dark mode toggle -->
+            <div class="top-bar" id="top-bar">
+                <div class="top-bar-left">
+                    <!-- Document summary pill — hover to see dropdown -->
+                    <div class="doc-dropdown-wrapper" id="doc-dropdown-wrapper">
+                        <button class="doc-summary-btn" id="doc-summary-btn">
+                            <span id="doc-summary-text">
+                                {% if documents %}
+                                    📄 {{ documents|length }} document{{ documents|length|pluralize }}
+                                {% else %}
+                                    📄 No documents
+                                {% endif %}
+                            </span>
+                            <span class="doc-caret">▾</span>
+                        </button>
+
+                        <!-- Dropdown panel — shown on hover -->
+                        <div class="doc-dropdown" id="doc-dropdown">
+                            <div class="doc-dropdown-list" id="doc-dropdown-list">
+                                {% for doc in documents %}
+                                    <div class="doc-dropdown-item" data-id="{{ doc.id }}">
+                                        <span class="doc-icon">📄</span>
+                                        <span class="doc-name" title="{{ doc.filename }}">{{ doc.filename }}</span>
+                                        <span class="doc-chunks">{{ doc.chunk_count }}c</span>
+                                        <button class="doc-remove-btn"
+                                                data-id="{{ doc.id }}"
+                                                data-name="{{ doc.filename }}"
+                                                title="Remove">✕</button>
+                                    </div>
+                                {% empty %}
+                                    <p class="doc-empty-hint">No documents uploaded yet.</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add document — always visible beside the pill -->
+                    <label class="add-doc-btn" for="file-input" title="Add document">
+                        + Add
+                        <input type="file" id="file-input" accept=".pdf,.txt" hidden>
+                    </label>
+
+                    <div id="upload-status" class="upload-status"></div>
+                </div>
+
+                <!-- Dark mode toggle on the right -->
+                <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle dark mode">
+                    <span id="theme-icon">🌙</span>
+                </button>
+            </div>
+
+            <!-- Chat area -->
+            <div class="chat-area">
+                <div class="chat-window" id="chat-window">
+                    {% if not chat_history %}
+                        <div class="empty-state" id="empty-state">
+                            <p>Upload one or more documents above, then ask anything about them.</p>
+                        </div>
+                    {% endif %}
+                    {% for turn in chat_history %}
+                        <div class="bubble {{ turn.role }}">{{ turn.content }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="input-bar">
+                    <form id="chat-form" class="chat-form">
+                        <input type="text" id="question-input"
+                               placeholder="Ask a question about your documents..."
+                               autocomplete="off">
+                        <button type="submit" id="send-button">Send</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Context menu -->
+    <div class="context-menu" id="context-menu">
+        <button class="context-menu-item delete" id="context-delete-btn">🗑 Delete</button>
+    </div>
+
+    <!-- Delete session modal -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <h3 class="modal-title">Delete chat?</h3>
+            <p class="modal-body">
+                Are you sure you want to permanently delete
+                <strong id="modal-chat-name"></strong>?
+                This cannot be undone.
+            </p>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" id="modal-cancel">Cancel</button>
+                <button class="modal-btn delete" id="modal-delete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.ACTIVE_SESSION_KEY = "{{ active_session_key }}";
+    </script>
+    <script src="{% static 'chatapp/js/chat.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in — Document Chat</title>
+    <link rel="stylesheet" href="{% static 'chatapp/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'chatapp/css/auth.css' %}">
+</head>
+<body class="auth-body">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1 class="auth-title">Document Chat</h1>
+            <p class="auth-subtitle">Sign in to your account</p>
+        </div>
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            {% if form.errors %}
+                <div class="auth-error">Invalid username or password.</div>
+            {% endif %}
+
+            <div class="auth-field">
+                <label for="id_username">Username</label>
+                <input type="text" name="username" id="id_username"
+                       autofocus autocomplete="username" required>
+            </div>
+
+            <div class="auth-field">
+                <label for="id_password">Password</label>
+                <input type="password" name="password" id="id_password"
+                       autocomplete="current-password" required>
+            </div>
+
+            <button type="submit" class="auth-btn">Sign in</button>
+        </form>
+
+        <p class="auth-switch">
+            Don't have an account? <a href="{% url 'register' %}">Register</a>
+        </p>
+    </div>
+    <script>
+        // Apply saved theme preference to auth pages too
+        const t = localStorage.getItem("theme");
+        if (t === "dark") document.documentElement.setAttribute("data-theme", "dark");
+    </script>
+</body>
+</html>
