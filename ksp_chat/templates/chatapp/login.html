@@ -17,8 +17,8 @@
 
         <form method="post" class="auth-form">
             {% csrf_token %}
-            {% if form.errors %}
-                <div class="auth-error">Invalid username or password.</div>
+            {% if error %}
+                <div class="auth-error">{{ error }}</div>
             {% endif %}
 
             <div class="auth-field">

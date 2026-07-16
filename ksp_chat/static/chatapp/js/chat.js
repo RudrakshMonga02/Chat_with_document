@@ -6,6 +6,18 @@ function getCsrfToken() {
     return input ? input.value : "";
 }
 
+// ── Auth ─────────────────────────────────────────────────────────────────────
+// A 401 means the token expired or was revoked mid-session (e.g. logged out
+// in another tab) — bounce to the login page rather than showing a raw
+// "Authentication required" error inside the chat window.
+function redirectIfUnauthorized(res) {
+    if (res.status === 401) {
+        window.location.href = "/login/";
+        return true;
+    }
+    return false;
+}
+
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 const htmlEl            = document.documentElement;
 const layout            = document.getElementById("layout");
@@ -29,14 +41,25 @@ const questionInput     = document.getElementById("question-input");
 const sendButton        = document.getElementById("send-button");
 
 const contextMenu       = document.getElementById("context-menu");
+const contextRenameBtn  = document.getElementById("context-rename-btn");
 const contextDeleteBtn  = document.getElementById("context-delete-btn");
 const modalOverlay      = document.getElementById("modal-overlay");
+const modalTitle        = document.getElementById("modal-title");
 const modalChatName     = document.getElementById("modal-chat-name");
 const modalCancel       = document.getElementById("modal-cancel");
 const modalDelete       = document.getElementById("modal-delete");
 
+const renameModalOverlay= document.getElementById("rename-modal-overlay");
+const renameInput       = document.getElementById("rename-input");
+const renameCancel      = document.getElementById("rename-cancel");
+const renameSave        = document.getElementById("rename-save");
+
 let activeSessionKey = window.ACTIVE_SESSION_KEY || "";
-let pendingDeleteKey = null;
+// Set right before the delete-confirmation modal opens; consumed (and
+// cleared) when the user confirms or cancels. Shared by both "delete
+// session" and "delete document" so there's one confirmation flow.
+let pendingDeleteAction = null; // { type: "session", key, name } | { type: "document", id, name }
+let pendingRenameKey = null;
 
 // ── Dark mode ─────────────────────────────────────────────────────────────────
 function setTheme(dark) {
@@ -99,16 +122,28 @@ document.addEventListener("click", (e) => {
     }
 });
 
+// ── HTML escaping ─────────────────────────────────────────────────────────────
+// Filenames and session titles are user-controlled (the uploaded file's own
+// name) but get re-rendered via innerHTML on every AJAX update, unlike the
+// initial page load which Django auto-escapes. Without this, a filename like
+// "<img src=x onerror=alert(1)>.pdf" executes on the next upload/session render.
+function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str ?? "";
+    return div.innerHTML;
+}
+
 // ── Document dropdown helpers ─────────────────────────────────────────────────
 function docDropdownItemHTML(doc) {
+    const filename = escapeHtml(doc.filename);
     return `
         <div class="doc-dropdown-item" data-id="${doc.id}">
             <span class="doc-icon">📄</span>
-            <span class="doc-name" title="${doc.filename}">${doc.filename}</span>
+            <span class="doc-name" title="${filename}">${filename}</span>
             <span class="doc-chunks">${doc.chunk_count}c</span>
             <button class="doc-remove-btn"
                     data-id="${doc.id}"
-                    data-name="${doc.filename}"
+                    data-name="${filename}"
                     title="Remove">✕</button>
         </div>`;
 }
@@ -137,7 +172,7 @@ function attachDocRemoveHandlers() {
     docDropdownList.querySelectorAll(".doc-remove-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
-            removeDocument(btn.dataset.id, btn.dataset.name);
+            openDeleteModal({ type: "document", id: btn.dataset.id, name: btn.dataset.name });
         });
     });
 }
@@ -160,6 +195,7 @@ fileInput.addEventListener("change", async () => {
             headers: { "X-CSRFToken": getCsrfToken() },
             body: formData,
         });
+        if (redirectIfUnauthorized(res)) return;
         const data = await res.json();
 
         if (!res.ok) {
@@ -185,12 +221,13 @@ fileInput.addEventListener("change", async () => {
 });
 
 // ── Remove document ───────────────────────────────────────────────────────────
-async function removeDocument(docId, docName) {
+async function performRemoveDocument(docId, docName) {
     try {
         const res = await fetch(`/remove-document/${docId}/`, {
             method: "DELETE",
             headers: { "X-CSRFToken": getCsrfToken() },
         });
+        if (redirectIfUnauthorized(res)) return;
         const data = await res.json();
         if (!res.ok) return;
 
@@ -250,6 +287,7 @@ chatForm.addEventListener("submit", async (e) => {
             },
             body: JSON.stringify({ question }),
         });
+        if (redirectIfUnauthorized(res)) return;
         const data = await res.json();
         pendingBubble.classList.remove("pending");
         pendingBubble.textContent = res.ok ? data.answer : (data.error || "Something went wrong.");
@@ -293,17 +331,21 @@ function renderSessionList(sessions) {
         sessionList.innerHTML = `<p class="sidebar-hint">Your chats will appear here.</p>`;
         return;
     }
-    sessionList.innerHTML = sessions.map(s => `
+    sessionList.innerHTML = sessions.map(s => {
+        const key = escapeHtml(s.session_key);
+        const title = escapeHtml(s.title);
+        return `
         <div class="session-item ${s.session_key === activeSessionKey ? "active" : ""}"
-             data-key="${s.session_key}" data-title="${s.title}">
+             data-key="${key}" data-title="${title}">
             <span class="session-icon">💬</span>
-            <span class="session-label">${truncate(s.title, 22)}</span>
+            <span class="session-label">${escapeHtml(truncate(s.title, 22))}</span>
             <button class="session-menu-btn"
-                    data-key="${s.session_key}"
-                    data-title="${s.title}"
+                    data-key="${key}"
+                    data-title="${title}"
                     title="Options">&#8942;</button>
         </div>
-    `).join("");
+    `;
+    }).join("");
     attachSessionHandlers();
 }
 
@@ -314,6 +356,7 @@ newChatBtn.addEventListener("click", async () => {
             method: "POST",
             headers: { "X-CSRFToken": getCsrfToken() },
         });
+        if (redirectIfUnauthorized(res)) return;
         const data = await res.json();
         activeSessionKey = data.new_session_key;
 
@@ -335,6 +378,7 @@ async function loadSession(sessionKey) {
 
     try {
         const res = await fetch(`/load-session/${sessionKey}/`);
+        if (redirectIfUnauthorized(res)) return;
         const data = await res.json();
         if (!res.ok) return;
 
@@ -358,11 +402,11 @@ async function loadSession(sessionKey) {
 
 // ── Context menu ──────────────────────────────────────────────────────────────
 function showContextMenu(e, sessionKey, sessionTitle) {
-    pendingDeleteKey = sessionKey;
+    contextMenu.dataset.key = sessionKey;
+    contextMenu.dataset.title = sessionTitle;
     contextMenu.style.top  = `${e.clientY}px`;
     contextMenu.style.left = `${e.clientX}px`;
     contextMenu.classList.add("visible");
-    contextDeleteBtn.dataset.title = sessionTitle;
 }
 
 function hideContextMenu() { contextMenu.classList.remove("visible"); }
@@ -372,35 +416,57 @@ document.addEventListener("click", (e) => {
 });
 
 contextDeleteBtn.addEventListener("click", () => {
+    const { key, title } = contextMenu.dataset;
     hideContextMenu();
-    modalChatName.textContent = `"${contextDeleteBtn.dataset.title}"`;
-    modalOverlay.classList.add("visible");
+    openDeleteModal({ type: "session", key, name: title });
 });
 
-// ── Delete session modal ──────────────────────────────────────────────────────
+contextRenameBtn.addEventListener("click", () => {
+    const { key, title } = contextMenu.dataset;
+    hideContextMenu();
+    openRenameModal(key, title);
+});
+
+// ── Delete confirmation modal (sessions and documents) ─────────────────────────
+function openDeleteModal(action) {
+    pendingDeleteAction = action;
+    modalTitle.textContent = action.type === "session" ? "Delete chat?" : "Delete document?";
+    modalChatName.textContent = `"${action.name}"`;
+    modalOverlay.classList.add("visible");
+}
+
 modalCancel.addEventListener("click", () => {
     modalOverlay.classList.remove("visible");
-    pendingDeleteKey = null;
+    pendingDeleteAction = null;
 });
 
 modalOverlay.addEventListener("click", (e) => {
     if (e.target === modalOverlay) {
         modalOverlay.classList.remove("visible");
-        pendingDeleteKey = null;
+        pendingDeleteAction = null;
     }
 });
 
 modalDelete.addEventListener("click", async () => {
-    if (!pendingDeleteKey) return;
-    const keyToDelete = pendingDeleteKey;
-    pendingDeleteKey = null;
+    if (!pendingDeleteAction) return;
+    const action = pendingDeleteAction;
+    pendingDeleteAction = null;
     modalOverlay.classList.remove("visible");
 
+    if (action.type === "session") {
+        await performDeleteSession(action.key);
+    } else {
+        await performRemoveDocument(action.id, action.name);
+    }
+});
+
+async function performDeleteSession(keyToDelete) {
     try {
         const res = await fetch(`/delete-session/${keyToDelete}/`, {
             method: "DELETE",
             headers: { "X-CSRFToken": getCsrfToken() },
         });
+        if (redirectIfUnauthorized(res)) return;
         const data = await res.json();
         if (!res.ok) return;
 
@@ -422,7 +488,60 @@ modalDelete.addEventListener("click", async () => {
     } catch {
         console.error("Failed to delete session.");
     }
+}
+
+// ── Rename chat modal ────────────────────────────────────────────────────────
+function openRenameModal(sessionKey, currentTitle) {
+    pendingRenameKey = sessionKey;
+    renameInput.value = currentTitle;
+    renameModalOverlay.classList.add("visible");
+    renameInput.focus();
+    renameInput.select();
+}
+
+function closeRenameModal() {
+    renameModalOverlay.classList.remove("visible");
+    pendingRenameKey = null;
+}
+
+renameCancel.addEventListener("click", closeRenameModal);
+
+renameModalOverlay.addEventListener("click", (e) => {
+    if (e.target === renameModalOverlay) closeRenameModal();
 });
+
+renameInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") submitRename();
+    if (e.key === "Escape") closeRenameModal();
+});
+
+renameSave.addEventListener("click", submitRename);
+
+async function submitRename() {
+    if (!pendingRenameKey) return;
+    const newTitle = renameInput.value.trim();
+    if (!newTitle) return;
+    const key = pendingRenameKey;
+
+    try {
+        const res = await fetch(`/rename-session/${key}/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCsrfToken(),
+            },
+            body: JSON.stringify({ title: newTitle }),
+        });
+        if (redirectIfUnauthorized(res)) return;
+        const data = await res.json();
+        if (!res.ok) return;
+
+        closeRenameModal();
+        if (data.sessions !== undefined) renderSessionList(data.sessions);
+    } catch {
+        console.error("Failed to rename session.");
+    }
+}
 
 // ── Init — wire handlers on page-load rendered elements ───────────────────────
 attachSessionHandlers();

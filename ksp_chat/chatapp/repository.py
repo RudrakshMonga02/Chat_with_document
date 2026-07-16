@@ -73,11 +73,15 @@ class ChromaVectorRepository(BaseVectorRepository):
             self._collection.delete(ids=ids)
 
     def reset(self):
+        """Permanently delete this session's entire collection. Every caller
+        discards this repository instance right after calling reset(), so
+        unlike the old version this doesn't recreate an empty collection
+        afterward — that used to leave a permanent empty stub behind for
+        every deleted session."""
         try:
             _chroma_client.delete_collection(name=self._collection_name)
         except Exception:
-            pass
-        self._collection = _chroma_client.get_or_create_collection(name=self._collection_name)
+            pass  # already gone — fine
 
     def count(self) -> int:
         return self._collection.count()
@@ -112,18 +116,21 @@ class HistoryVectorRepository:
         )
 
     def query_relevant(self, embedding: list[float], top_k: int,
-                       exclude_session_key: str = None) -> list[dict]:
+                       session_keys: list[str]) -> list[dict]:
         """
-        Retrieve top_k most relevant past messages.
-        Optionally exclude the current session to avoid duplicate context
-        (current session history is already passed separately).
+        Retrieve top_k most relevant past messages, restricted to the given
+        session_keys. The caller decides what's "in scope" — e.g. a single
+        browser's own other sessions — rather than searching every session
+        ever created by anyone. An empty list returns nothing rather than
+        falling back to an unscoped search.
         """
-        if self._collection.count() == 0:
+        if not session_keys or self._collection.count() == 0:
             return []
 
         results = self._collection.query(
             query_embeddings=[embedding],
             n_results=min(top_k, self._collection.count()),
+            where={"session_key": {"$in": session_keys}},
         )
 
         items = []
@@ -131,8 +138,6 @@ class HistoryVectorRepository:
         metas = results["metadatas"][0] if results["metadatas"] else []
 
         for doc, meta in zip(docs, metas):
-            if exclude_session_key and meta.get("session_key") == exclude_session_key:
-                continue
             items.append({
                 "content": doc,
                 "role": meta.get("role", "user"),

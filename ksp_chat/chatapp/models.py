@@ -1,18 +1,43 @@
 """
 models.py — Database models for persistent chat history.
 
-Three tables:
+Four tables:
+  AppUser      — one row per username seen from the external JWT auth
+                 service (NEW). Never stores a password or email — that's
+                 owned entirely by that service. Lazily created the first
+                 time a valid token for that username is seen.
   ChatSession  — one row per conversation
-  Document     — one row per uploaded file within a session (NEW)
+  Document     — one row per uploaded file within a session
   ChatMessage  — one row per message bubble, FK to ChatSession
 """
 
 from django.db import models
 
 
+class AppUser(models.Model):
+    username = models.CharField(max_length=150, unique=True, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.username
+
+
 class ChatSession(models.Model):
     session_key = models.CharField(max_length=40, unique=True, db_index=True)
     title = models.CharField(max_length=255, default="New chat")
+    # Set once the user manually renames the chat — stops upload/remove from
+    # silently overwriting their chosen name with an auto-generated one.
+    title_locked = models.BooleanField(default=False)
+    # Anonymous sessions have no owner. Login is optional (see auth_views.py)
+    # — SET_NULL rather than CASCADE so an AppUser row disappearing never
+    # takes a chat's history with it, it just goes back to anonymous-only.
+    owner = models.ForeignKey(
+        AppUser,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="chat_sessions",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

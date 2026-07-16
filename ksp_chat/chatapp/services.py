@@ -13,10 +13,22 @@ Major upgrades in this version:
                            updates the Django session key in views.py.
 """
 
+import logging
+
 from .embeddings import BaseEmbeddingStrategy, GeminiEmbeddingStrategy
 from .extractors import get_extractor
 from .llm import BaseLLMStrategy, GeminiLLMStrategy
 from .repository import BaseVectorRepository, ChromaVectorRepository, HistoryVectorRepository
+
+logger = logging.getLogger(__name__)
+
+
+class RAGServiceError(Exception):
+    """Raised when an embedding or generation call to the LLM provider fails.
+
+    Kept deliberately generic (no provider-specific detail) since this
+    message is shown to the end user; the real exception is logged instead.
+    """
 
 
 # ---------------------------------------------------------------------------
@@ -137,7 +149,13 @@ class RAGService:
             raise ValueError("Couldn't extract any text from that file.")
 
         chunks = _chunk_text(text)
-        embeddings = self._embedder.embed_documents(chunks)
+        try:
+            embeddings = self._embedder.embed_documents(chunks)
+        except Exception:
+            logger.exception("Embedding failed while ingesting '%s'", django_file.name)
+            raise RAGServiceError(
+                "Couldn't process that document right now — the embedding service is unavailable. Please try again shortly."
+            ) from None
         self._repo.add(chunks, embeddings, source=django_file.name)
 
         return {"filename": django_file.name, "chunk_count": len(chunks)}
@@ -152,19 +170,22 @@ class RAGService:
         Embed a saved ChatMessage and store it in the global history collection.
         Called from views.py after every message is saved to the DB.
         This is what powers cross-session context retrieval.
-        """
-        embedding = self._embedder.embed_query(content)
-        self._history_repo.add_message(
-            message_id=message_id,
-            content=content,
-            embedding=embedding,
-            session_key=self._session_key,
-            role=role,
-        )
 
-    def delete_session_history(self):
-        """Remove all history embeddings for this session — called on session delete."""
-        self._history_repo.delete_session_messages(self._session_key)
+        Best-effort: by the time this runs, the answer has already been
+        generated and saved, so a failure here is logged rather than raised —
+        it shouldn't turn an already-successful chat turn into an error.
+        """
+        try:
+            embedding = self._embedder.embed_query(content)
+            self._history_repo.add_message(
+                message_id=message_id,
+                content=content,
+                embedding=embedding,
+                session_key=self._session_key,
+                role=role,
+            )
+        except Exception:
+            logger.exception("Failed to embed message %s into cross-session history", message_id)
 
     # ── Query ─────────────────────────────────────────────────────────────────
 
@@ -173,26 +194,36 @@ class RAGService:
         question: str,
         current_session_history: list[dict],
         source_filenames: list[str],
+        cross_session_keys: list[str],
     ) -> str:
         """
         Full RAG query pipeline:
           1. Embed the question
           2. Retrieve relevant document chunks (from this session's collection)
-          3. Retrieve relevant past messages (from global history, excluding current session)
+          3. Retrieve relevant past messages from cross_session_keys — the
+             caller's *other* sessions (e.g. the same browser's own past
+             chats), never the whole cross-user history
           4. Build system prompt with document + cross-session context
           5. Call Gemini with structured multi-turn history
         """
-        question_embedding = self._embedder.embed_query(question)
+        try:
+            question_embedding = self._embedder.embed_query(question)
+        except Exception:
+            logger.exception("Embedding failed for question")
+            raise RAGServiceError(
+                "Couldn't process your question right now — please try again shortly."
+            ) from None
 
         # Step 2 — document retrieval
         relevant_chunks = self._repo.query(question_embedding, top_k=5)
 
-        # Step 3 — cross-session history retrieval (exclude current session
-        # since that's already in current_session_history)
+        # Step 3 — cross-session history retrieval, scoped to the caller's
+        # own other sessions (current session is excluded from this list by
+        # the caller since that history is already in current_session_history)
         cross_session = self._history_repo.query_relevant(
             embedding=question_embedding,
             top_k=4,
-            exclude_session_key=self._session_key,
+            session_keys=cross_session_keys,
         )
 
         # Step 4 — system prompt (document context + cross-session context)
@@ -205,8 +236,14 @@ class RAGService:
         # Step 5 — structured multi-turn call
         # current_session_history goes as proper alternating turns,
         # NOT as a text block in the prompt
-        return self._llm.generate(
-            system_prompt=system_prompt,
-            history=current_session_history,
-            question=question,
-        )
+        try:
+            return self._llm.generate(
+                system_prompt=system_prompt,
+                history=current_session_history,
+                question=question,
+            )
+        except Exception:
+            logger.exception("Gemini generation failed")
+            raise RAGServiceError(
+                "Couldn't generate an answer right now — please try again shortly."
+            ) from None

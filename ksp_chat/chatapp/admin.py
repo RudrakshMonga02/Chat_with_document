@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ChatMessage, ChatSession, Document
+from .models import AppUser, ChatMessage, ChatSession, Document
 
 
 class DocumentInline(admin.TabularInline):
@@ -14,11 +14,18 @@ class ChatMessageInline(admin.TabularInline):
     extra = 0
 
 
+@admin.register(AppUser)
+class AppUserAdmin(admin.ModelAdmin):
+    list_display = ("username", "created_at")
+    search_fields = ("username",)
+    readonly_fields = ("username", "created_at")
+
+
 @admin.register(ChatSession)
 class ChatSessionAdmin(admin.ModelAdmin):
-    list_display = ("title", "session_key", "created_at", "updated_at")
+    list_display = ("title", "owner", "session_key", "created_at", "updated_at")
     list_filter = ("created_at",)
-    search_fields = ("title", "session_key")
+    search_fields = ("title", "session_key", "owner__username")
     readonly_fields = ("session_key", "created_at", "updated_at")
     inlines = [DocumentInline, ChatMessageInline]
 

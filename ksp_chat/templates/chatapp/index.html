@@ -87,10 +87,19 @@
                     <div id="upload-status" class="upload-status"></div>
                 </div>
 
-                <!-- Dark mode toggle on the right -->
-                <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle dark mode">
-                    <span id="theme-icon">🌙</span>
-                </button>
+                <!-- Account status + dark mode toggle on the right.
+                     Login is required to reach this page, so auth_username
+                     is always set here. -->
+                <div class="top-bar-right">
+                    <span class="auth-status" title="Signed in">👤 {{ auth_username }}</span>
+                    <form method="post" action="{% url 'logout' %}" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="auth-link-btn">Log out</button>
+                    </form>
+                    <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle dark mode">
+                        <span id="theme-icon">🌙</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Chat area -->
@@ -121,21 +130,34 @@
 
     <!-- Context menu -->
     <div class="context-menu" id="context-menu">
+        <button class="context-menu-item" id="context-rename-btn">✎ Rename</button>
         <button class="context-menu-item delete" id="context-delete-btn">🗑 Delete</button>
     </div>
 
-    <!-- Delete session modal -->
+    <!-- Delete confirmation modal — reused for both chat sessions and documents -->
     <div class="modal-overlay" id="modal-overlay">
         <div class="modal">
-            <h3 class="modal-title">Delete chat?</h3>
+            <h3 class="modal-title" id="modal-title">Delete chat?</h3>
             <p class="modal-body">
-                Are you sure you want to permanently delete
+                Are you sure you want to delete
                 <strong id="modal-chat-name"></strong>?
-                This cannot be undone.
+                This action cannot be undone.
             </p>
             <div class="modal-actions">
                 <button class="modal-btn cancel" id="modal-cancel">Cancel</button>
                 <button class="modal-btn delete" id="modal-delete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename chat modal -->
+    <div class="modal-overlay" id="rename-modal-overlay">
+        <div class="modal">
+            <h3 class="modal-title">Rename chat</h3>
+            <input type="text" id="rename-input" class="modal-input" maxlength="255" autocomplete="off">
+            <div class="modal-actions">
+                <button class="modal-btn cancel" id="rename-cancel">Cancel</button>
+                <button class="modal-btn primary" id="rename-save">Save</button>
             </div>
         </div>
     </div>

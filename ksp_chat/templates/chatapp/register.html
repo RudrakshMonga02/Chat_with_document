@@ -18,14 +18,9 @@
         <form method="post" class="auth-form">
             {% csrf_token %}
 
-            {% if form.errors %}
+            {% if errors %}
                 <div class="auth-error">
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <div>{{ error }}</div>
-                        {% endfor %}
-                    {% endfor %}
-                    {% for error in form.non_field_errors %}
+                    {% for error in errors %}
                         <div>{{ error }}</div>
                     {% endfor %}
                 </div>

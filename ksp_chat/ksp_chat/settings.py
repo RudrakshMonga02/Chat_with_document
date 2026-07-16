@@ -13,12 +13,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-vko9%3t0di(r^&@7#)zkc*+j7@!%wc+e9b&=10=b&g%riu38_='
+# Falls back to the original dev-only key so local behavior is unchanged;
+# set DJANGO_SECRET_KEY in .env for any non-local deployment.
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-vko9%3t0di(r^&@7#)zkc*+j7@!%wc+e9b&=10=b&g%riu38_=',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    h.strip() for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if h.strip()
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -36,6 +43,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'chatapp.middleware.JWTAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -89,5 +97,16 @@ CHROMA_PERSIST_DIR = str(BASE_DIR / 'chroma_db')
 
 # Gemini API key — loaded from .env file above, never hardcoded
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+
+# External FastAPI JWT auth service (separate repo/process — this app never
+# handles passwords itself, only verifies tokens it issues). SECRET_KEY/
+# ALGORITHM must match that service's own .env exactly, or every token will
+# fail local verification. Deliberately named apart from Django's own
+# SECRET_KEY above so the two can never be confused/collide.
+# Left unset, login/register/logout simply won't work yet — the rest of the
+# app (anonymous, session-based) is unaffected.
+AUTH_JWT_SECRET_KEY = os.environ.get('AUTH_JWT_SECRET_KEY', '')
+AUTH_JWT_ALGORITHM = os.environ.get('AUTH_JWT_ALGORITHM', 'HS256')
+AUTH_SERVICE_BASE_URL = os.environ.get('AUTH_SERVICE_BASE_URL', 'http://127.0.0.1:8001')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

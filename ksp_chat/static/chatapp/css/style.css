@@ -335,6 +335,23 @@ body {
 .modal-btn.cancel:hover { filter: brightness(0.92); }
 .modal-btn.delete { background: #e03131; color: #fff; }
 .modal-btn.delete:hover { background: #c92a2a; }
+.modal-btn.primary { background: var(--accent); color: #fff; }
+.modal-btn.primary:hover { background: var(--accent-hover); }
+
+.modal-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-input);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--bg-main);
+    color: var(--text-primary);
+    outline: none;
+    margin-bottom: 22px;
+    transition: border-color 0.15s;
+}
+
+.modal-input:focus { border-color: var(--accent); }
 
 /* =========================================================
    Main area
@@ -377,6 +394,44 @@ body {
     flex: 1;
     min-width: 0;
     overflow: visible;
+}
+
+.top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.auth-status {
+    font-size: 13px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.logout-form {
+    display: inline-flex;
+}
+
+.auth-link-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border-doc);
+    background: var(--bg-doc-pill);
+    color: var(--text-primary);
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.auth-link-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--bg-hover-light);
 }
 
 /* =========================================================
