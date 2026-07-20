@@ -708,4 +708,84 @@ body {
 }
 
 #send-button:hover    { background: var(--accent-hover); }
+
+/* =========================================================
+   Sidebar footer nav — Chats / Logs, pinned to the bottom of
+   the sidebar (sidebar-body is flex:1, so this sits below it)
+   ========================================================= */
+.sidebar-footer {
+    flex-shrink: 0;
+    padding: 10px 12px;
+    border-top: 1px solid var(--border-sidebar);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sidebar-footer-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    color: var(--text-sidebar-dim);
+    text-decoration: none;
+    font-size: 13.5px;
+    white-space: nowrap;
+    transition: background 0.12s, color 0.12s;
+}
+
+.sidebar-footer-btn:hover { background: rgba(255,255,255,0.07); color: var(--text-sidebar); }
+.sidebar-footer-btn.active { background: rgba(91,91,255,0.25); color: #ffffff; }
+
+.sidebar-footer-icon { font-size: 14px; }
+
+/* =========================================================
+   Live logs page
+   ========================================================= */
+.page-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.logs-status {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 12px;
+}
+
+.logs-status.connecting   { color: #a67c00; background: rgba(232,180,0,0.12); }
+.logs-status.connected    { color: #1e9e5a; background: rgba(46,204,113,0.12); }
+.logs-status.disconnected { color: #d13c4b; background: rgba(255,91,110,0.12); }
+
+.logs-console {
+    flex: 1;
+    overflow-y: auto;
+    background: #0d0d14;
+    font-family: "Consolas", "SF Mono", Menlo, monospace;
+    font-size: 12.5px;
+    line-height: 1.5;
+    padding: 14px 18px;
+}
+
+.log-line {
+    display: flex;
+    gap: 10px;
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.log-time  { color: #6a6a80; flex-shrink: 0; }
+.log-level { font-weight: 600; flex-shrink: 0; width: 60px; }
+.log-message { color: #d0d0e0; }
+
+.log-line.level-DEBUG    .log-level { color: #7a7a9a; }
+.log-line.level-INFO     .log-level { color: #5b9bff; }
+.log-line.level-WARNING  .log-level { color: #e8b400; }
+.log-line.level-ERROR    .log-level,
+.log-line.level-CRITICAL .log-level { color: #ff5b6e; }
 #send-button:disabled { background: var(--accent-disabled); cursor: not-allowed; }

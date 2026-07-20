@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Logs</title>
+    <link rel="stylesheet" href="{% static 'chatapp/css/style.css' %}">
+</head>
+<body>
+    <button class="toggle-btn" id="toggle-btn" title="Toggle sidebar">&#8942;</button>
+
+    <div class="layout" id="layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-title">Navigation</span>
+            </div>
+            <div class="sidebar-body">
+                <p class="sidebar-hint">Live application logs, streamed as they happen.</p>
+            </div>
+            {% include "chatapp/_nav_footer.html" %}
+        </aside>
+
+        <!-- MAIN -->
+        <div class="main" id="main">
+
+            <div class="top-bar" id="top-bar">
+                <div class="top-bar-left">
+                    <span class="page-title">Live Logs</span>
+                </div>
+                <div class="top-bar-right">
+                    <span class="logs-status connecting" id="logs-status">Connecting…</span>
+                    <span class="auth-status" title="Signed in">👤 {{ auth_username }}</span>
+                </div>
+            </div>
+
+            <div class="logs-console" id="logs-console"></div>
+
+        </div>
+    </div>
+
+    {{ initial_logs|json_script:"initial-logs-data" }}
+    <script src="{% static 'chatapp/js/logs.js' %}"></script>
+</body>
+</html>

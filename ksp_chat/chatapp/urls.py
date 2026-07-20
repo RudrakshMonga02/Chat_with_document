@@ -3,6 +3,7 @@ from . import auth_views, views
 
 urlpatterns = [
     path("", views.index, name="index"),
+    path("logs/", views.logs_page, name="logs"),
     path("upload/", views.upload_file, name="upload_file"),
     path("chat/", views.chat_api, name="chat_api"),
     path("new-session/", views.new_session, name="new_session"),

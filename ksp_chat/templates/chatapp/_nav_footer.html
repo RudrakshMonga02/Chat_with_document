@@ -1,0 +1,12 @@
+{# Shared sidebar footer nav — included by index.html and logs.html so the
+   two pages can link to each other and stay visually consistent. #}
+<div class="sidebar-footer">
+    <a href="{% url 'index' %}"
+       class="sidebar-footer-btn {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+        <span class="sidebar-footer-icon">💬</span> Chats
+    </a>
+    <a href="{% url 'logs' %}"
+       class="sidebar-footer-btn {% if request.resolver_match.url_name == 'logs' %}active{% endif %}">
+        <span class="sidebar-footer-icon">🧾</span> Logs
+    </a>
+</div>

@@ -50,6 +50,7 @@ def login_view(request):
         return render(request, "chatapp/login.html", {"error": "Auth service is unavailable — please try again shortly."})
 
     if resp.status_code != 200:
+        logger.warning("Failed login attempt for username '%s'", username)
         return render(request, "chatapp/login.html", {"error": "Invalid username or password."})
 
     token = (resp.json() or {}).get("access_token")
@@ -57,6 +58,7 @@ def login_view(request):
         return render(request, "chatapp/login.html", {"error": "Unexpected response from the auth service."})
 
     app_user, _ = AppUser.objects.get_or_create(username=username)
+    logger.info("User '%s' logged in", username)
 
     # Anonymous chats created in this browser before logging in follow the
     # account from here on, so nothing is "lost" by signing in.
@@ -112,6 +114,7 @@ def register_view(request):
         return render(request, "chatapp/register.html", {"errors": ["Auth service is unavailable — please try again shortly."]})
 
     if resp.status_code == 201:
+        logger.info("New user registered: '%s'", username)
         return HttpResponseRedirect(reverse("login"))
 
     # Two different error shapes depending on failure: a 400 with a plain
@@ -148,6 +151,8 @@ def logout_view(request):
             )
         except requests.RequestException:
             logger.warning("Failed to revoke token with the auth service on logout", exc_info=True)
+
+    logger.info("User '%s' logged out", get_request_username(request))
 
     response = HttpResponseRedirect(reverse("login"))
     response.delete_cookie(AUTH_COOKIE_NAME)

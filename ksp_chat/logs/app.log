@@ -1,0 +1,910 @@
+INFO 2026-07-17 11:29:54,087 chatapp integration-test-log-line-42
+INFO 2026-07-17 11:30:44,370 chatapp integration-test-log-line-42
+INFO 2026-07-17 11:35:29,475 django.channels.server HTTP GET /login/ 200 [0.07, 127.0.0.1:52736]
+INFO 2026-07-17 11:35:50,351 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52744]
+INFO 2026-07-17 11:35:50,352 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:52744]
+WARNING 2026-07-17 11:35:51,362 django.request Not Found: /this-route-does-not-exist/
+WARNING 2026-07-17 11:35:51,363 django.channels.server HTTP GET /this-route-does-not-exist/ 404 [1.01, 127.0.0.1:52745]
+INFO 2026-07-17 11:35:51,365 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52744]
+INFO 2026-07-17 11:36:06,287 django.channels.server HTTP GET / 302 [0.00, 127.0.0.1:52750]
+INFO 2026-07-17 11:36:06,325 django.channels.server HTTP GET /logs/ 302 [0.00, 127.0.0.1:52751]
+INFO 2026-07-17 11:36:07,571 django.channels.server HTTP GET / 200 [1.21, 127.0.0.1:52752]
+INFO 2026-07-17 11:36:07,628 django.channels.server HTTP GET /logs/ 200 [0.01, 127.0.0.1:52753]
+INFO 2026-07-17 11:36:08,387 django.channels.server HTTP GET / 200 [0.32, 127.0.0.1:52754]
+INFO 2026-07-17 11:40:57,061 django.utils.autoreload Watching for file changes with StatReloader
+INFO 2026-07-17 11:41:31,277 django.channels.server [32mHTTP GET / 302 [0.06, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:41:32,008 django.channels.server [mHTTP GET /login/ 200 [0.01, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:41:32,040 django.channels.server [36mHTTP GET /static/chatapp/css/auth.css 304 [0.01, 127.0.0.1:62565][0m
+INFO 2026-07-17 11:41:32,109 django.channels.server [mHTTP GET /static/chatapp/css/style.css 200 [0.08, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:41:49,823 django.channels.server [32mHTTP POST /login/ 302 [0.24, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:41:50,442 django.channels.server [mHTTP GET / 200 [0.62, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:41:50,463 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.00, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:42:10,839 django.channels.server [mHTTP GET /logs/ 200 [0.01, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:42:10,859 django.channels.server [mHTTP GET /static/chatapp/js/logs.js 200 [0.00, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:42:10,889 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:58405]
+INFO 2026-07-17 11:42:10,895 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:58405]
+INFO 2026-07-17 11:42:13,076 django.channels.server [mHTTP GET / 200 [0.01, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:42:13,086 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:58405]
+INFO 2026-07-17 11:42:13,095 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.00, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:42:23,632 django.channels.server [mHTTP GET /logs/ 200 [0.00, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:42:23,650 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:59009]
+INFO 2026-07-17 11:42:23,652 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:59009]
+INFO 2026-07-17 11:42:27,486 django.channels.server [mHTTP GET / 200 [0.02, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:42:27,491 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:59009]
+INFO 2026-07-17 11:42:27,503 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.00, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:42:50,704 django.channels.server [mHTTP POST /chat/ 200 [8.02, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:42:58,617 django.channels.server [mHTTP GET /load-session/treswcgybo5guwltb5s16p9gc3znlu9t/ 200 [0.03, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:43:28,880 django.channels.server [mHTTP POST /upload/ 200 [4.84, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:44:27,935 django.channels.server [mHTTP GET /logs/ 200 [0.00, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:44:27,955 django.channels.server [36mHTTP GET /static/chatapp/css/style.css 304 [0.00, 127.0.0.1:62376][0m
+INFO 2026-07-17 11:44:27,956 django.channels.server [36mHTTP GET /static/chatapp/js/logs.js 304 [0.00, 127.0.0.1:60346][0m
+INFO 2026-07-17 11:44:27,961 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:62273]
+INFO 2026-07-17 11:44:27,963 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:62273]
+INFO 2026-07-17 11:44:32,089 django.channels.server [mHTTP GET / 200 [0.01, 127.0.0.1:60346][0m
+INFO 2026-07-17 11:44:32,094 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:62273]
+INFO 2026-07-17 11:44:32,300 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.00, 127.0.0.1:60346][0m
+INFO 2026-07-17 11:44:34,211 django.channels.server [mHTTP GET /logs/ 200 [0.00, 127.0.0.1:60346][0m
+INFO 2026-07-17 11:44:34,229 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:49671]
+INFO 2026-07-17 11:44:34,231 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:49671]
+INFO 2026-07-17 11:44:35,330 django.channels.server [mHTTP GET / 200 [0.01, 127.0.0.1:60346][0m
+INFO 2026-07-17 11:44:35,335 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:49671]
+INFO 2026-07-17 11:44:35,348 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.00, 127.0.0.1:60346][0m
+INFO 2026-07-17 11:45:03,394 django.channels.server [mHTTP POST /chat/ 200 [4.96, 127.0.0.1:60346][0m
+INFO 2026-07-17 11:45:04,510 django.channels.server [mHTTP GET /logs/ 200 [0.00, 127.0.0.1:60346][0m
+INFO 2026-07-17 11:45:04,533 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:62759]
+INFO 2026-07-17 11:45:04,537 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:62759]
+INFO 2026-07-17 11:45:08,090 django.channels.server [mHTTP GET /logs/ 200 [0.00, 127.0.0.1:60346][0m
+INFO 2026-07-17 11:45:08,096 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:62759]
+INFO 2026-07-17 11:45:08,108 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:62514]
+INFO 2026-07-17 11:45:08,111 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:62514]
+INFO 2026-07-17 11:45:12,774 django.channels.server [mHTTP GET /logs/ 200 [0.00, 127.0.0.1:60346][0m
+INFO 2026-07-17 11:45:12,782 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:62514]
+INFO 2026-07-17 11:45:12,793 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:53597]
+INFO 2026-07-17 11:45:12,796 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:53597]
+INFO 2026-07-17 11:45:26,418 django.channels.server [mHTTP GET /logs/ 200 [0.00, 127.0.0.1:60346][0m
+INFO 2026-07-17 11:45:26,427 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:53597]
+INFO 2026-07-17 11:45:26,440 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:56484]
+INFO 2026-07-17 11:45:26,443 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:56484]
+INFO 2026-07-17 11:45:31,530 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:56484]
+INFO 2026-07-17 11:45:47,266 django.channels.server [mHTTP POST /chat/ 200 [8.97, 127.0.0.1:60346][0m
+INFO 2026-07-17 11:46:22,303 django.channels.server [mHTTP POST /chat/ 200 [6.14, 127.0.0.1:60346][0m
+INFO 2026-07-17 11:47:26,946 django.channels.server [mHTTP GET /logs/ 200 [0.01, 127.0.0.1:51159][0m
+INFO 2026-07-17 11:47:26,964 django.channels.server [36mHTTP GET /static/chatapp/css/style.css 304 [0.00, 127.0.0.1:51159][0m
+INFO 2026-07-17 11:47:26,966 django.channels.server [36mHTTP GET /static/chatapp/js/logs.js 304 [0.00, 127.0.0.1:53050][0m
+INFO 2026-07-17 11:47:26,972 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:54003]
+INFO 2026-07-17 11:47:26,973 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:54003]
+INFO 2026-07-17 11:47:29,841 django.channels.server [mHTTP GET /logs/ 200 [0.00, 127.0.0.1:53050][0m
+INFO 2026-07-17 11:47:29,847 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:54003]
+INFO 2026-07-17 11:47:29,857 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52295]
+INFO 2026-07-17 11:47:29,860 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:52295]
+INFO 2026-07-17 11:50:14,722 django.channels.server [mHTTP GET /static/chatapp/js/chat.js 200 [0.00, 127.0.0.1:58107][0m
+INFO 2026-07-17 11:50:14,770 django.channels.server [mHTTP GET /static/chatapp/js/logs.js 200 [0.00, 127.0.0.1:58108][0m
+INFO 2026-07-17 11:50:14,809 django.channels.server [32mHTTP GET /logs/ 302 [0.00, 127.0.0.1:58109][0m
+WARNING 2026-07-17 11:50:14,861 django.request Method Not Allowed (HEAD): /login/
+WARNING 2026-07-17 11:50:14,863 django.channels.server [31;1mHTTP HEAD /login/ 405 [0.00, 127.0.0.1:58110][0m
+INFO 2026-07-17 11:50:22,841 django.channels.server [mHTTP GET /logs/ 200 [0.00, 127.0.0.1:57214][0m
+INFO 2026-07-17 11:50:22,846 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52295]
+INFO 2026-07-17 11:50:22,861 django.channels.server [36mHTTP GET /static/chatapp/css/style.css 304 [0.00, 127.0.0.1:57214][0m
+INFO 2026-07-17 11:50:22,862 django.channels.server [36mHTTP GET /static/chatapp/js/logs.js 304 [0.00, 127.0.0.1:53230][0m
+INFO 2026-07-17 11:50:22,869 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:54500]
+INFO 2026-07-17 11:50:22,871 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:54500]
+INFO 2026-07-17 11:50:28,922 django.channels.server [mHTTP GET / 200 [0.02, 127.0.0.1:53230][0m
+INFO 2026-07-17 11:50:28,935 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:54500]
+INFO 2026-07-17 11:50:28,948 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.00, 127.0.0.1:53230][0m
+INFO 2026-07-17 11:50:31,045 django.channels.server [mHTTP GET /logs/ 200 [0.01, 127.0.0.1:53230][0m
+INFO 2026-07-17 11:50:31,066 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:63113]
+INFO 2026-07-17 11:50:31,068 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:63113]
+INFO 2026-07-17 11:50:46,361 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:63979]
+INFO 2026-07-17 11:50:46,362 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:63979]
+WARNING 2026-07-17 11:50:46,374 django.request Not Found: /this-route-does-not-exist/
+WARNING 2026-07-17 11:50:46,375 django.channels.server [33mHTTP GET /this-route-does-not-exist/ 404 [0.01, 127.0.0.1:63980][0m
+INFO 2026-07-17 11:50:46,377 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:63979]
+INFO 2026-07-17 11:50:48,414 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:63983]
+INFO 2026-07-17 11:50:48,415 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:63983]
+WARNING 2026-07-17 11:50:50,473 django.request Not Found: /this-route-does-not-exist/
+WARNING 2026-07-17 11:50:50,477 django.channels.server [33mHTTP GET /this-route-does-not-exist/ 404 [0.03, 127.0.0.1:63985][0m
+INFO 2026-07-17 11:50:50,481 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:63983]
+INFO 2026-07-17 11:55:27,019 django.channels.server [mHTTP GET /logs/ 200 [0.01, 127.0.0.1:62801][0m
+INFO 2026-07-17 11:55:27,026 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:63113]
+INFO 2026-07-17 11:55:27,037 django.channels.server [36mHTTP GET /static/chatapp/css/style.css 304 [0.00, 127.0.0.1:62801][0m
+INFO 2026-07-17 11:55:27,070 django.channels.server [36mHTTP GET /static/chatapp/js/logs.js 304 [0.03, 127.0.0.1:51269][0m
+INFO 2026-07-17 11:55:27,075 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:59916]
+INFO 2026-07-17 11:55:27,077 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:59916]
+INFO 2026-07-17 11:55:32,372 django.channels.server [mHTTP GET / 200 [0.01, 127.0.0.1:62801][0m
+INFO 2026-07-17 11:55:32,377 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:59916]
+INFO 2026-07-17 11:55:32,390 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.00, 127.0.0.1:62801][0m
+INFO 2026-07-17 11:55:49,148 django.channels.server [mHTTP POST /chat/ 200 [10.30, 127.0.0.1:62801][0m
+INFO 2026-07-17 11:55:54,790 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52744]
+INFO 2026-07-17 11:55:54,791 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:52744]
+INFO 2026-07-17 11:55:54,797 django.channels.server [32mHTTP GET /login/ 302 [0.00, 127.0.0.1:52745][0m
+INFO 2026-07-17 11:55:56,461 django.channels.server [mHTTP GET / 200 [1.66, 127.0.0.1:52745][0m
+INFO 2026-07-17 11:55:57,031 django.channels.server [mHTTP GET /logs/ 200 [0.00, 127.0.0.1:62801][0m
+INFO 2026-07-17 11:55:58,592 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:62584]
+INFO 2026-07-17 11:55:58,596 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:62584]
+INFO 2026-07-17 11:56:00,474 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52744]
+INFO 2026-07-17 11:56:01,633 django.channels.server [mHTTP GET / 200 [0.03, 127.0.0.1:62801][0m
+INFO 2026-07-17 11:56:01,665 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:62584]
+INFO 2026-07-17 11:56:01,746 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.04, 127.0.0.1:62801][0m
+INFO 2026-07-17 11:56:26,379 django.channels.server [32mHTTP GET / 302 [0.00, 127.0.0.1:50946][0m
+INFO 2026-07-17 11:56:26,388 django.channels.server [mHTTP GET /login/ 200 [0.00, 127.0.0.1:50946][0m
+INFO 2026-07-17 11:56:26,450 django.channels.server [mHTTP GET /static/chatapp/css/style.css 200 [0.00, 127.0.0.1:50946][0m
+INFO 2026-07-17 11:56:26,481 django.channels.server [mHTTP GET /static/chatapp/css/auth.css 200 [0.03, 127.0.0.1:63073][0m
+WARNING 2026-07-17 11:56:26,630 django.request Not Found: /favicon.ico
+WARNING 2026-07-17 11:56:26,631 django.channels.server [33mHTTP GET /favicon.ico 404 [0.02, 127.0.0.1:63073][0m
+INFO 2026-07-17 11:56:41,550 django.channels.server [32mHTTP POST /login/ 302 [0.23, 127.0.0.1:63073][0m
+INFO 2026-07-17 11:56:41,652 django.channels.server [mHTTP GET / 200 [0.10, 127.0.0.1:63073][0m
+INFO 2026-07-17 11:56:41,685 django.channels.server [mHTTP GET /static/chatapp/js/chat.js 200 [0.00, 127.0.0.1:63073][0m
+INFO 2026-07-17 11:56:59,990 django.channels.server [mHTTP GET /logs/ 200 [0.01, 127.0.0.1:63073][0m
+INFO 2026-07-17 11:57:00,030 django.channels.server [mHTTP GET /static/chatapp/js/logs.js 200 [0.00, 127.0.0.1:63073][0m
+INFO 2026-07-17 11:57:00,039 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:58337]
+INFO 2026-07-17 11:57:00,042 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:58337]
+INFO 2026-07-17 11:57:03,172 django.channels.server [mHTTP GET / 200 [0.01, 127.0.0.1:63073][0m
+INFO 2026-07-17 11:57:07,094 django.channels.server [mHTTP GET /logs/ 200 [0.00, 127.0.0.1:63073][0m
+INFO 2026-07-17 11:57:07,135 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52395]
+INFO 2026-07-17 11:57:07,137 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:52395]
+INFO 2026-07-17 11:57:48,161 django.channels.server [mHTTP POST /chat/ 200 [7.47, 127.0.0.1:64201][0m
+INFO 2026-07-17 11:58:10,794 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:56809]
+INFO 2026-07-17 11:58:10,796 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:56809]
+INFO 2026-07-17 11:58:11,804 django.channels.server direct-test-django-channels-server
+INFO 2026-07-17 11:58:17,486 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:56809]
+INFO 2026-07-17 11:58:25,402 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:58337]
+INFO 2026-07-17 11:58:39,270 django.channels.server [mHTTP POST /chat/ 200 [14.34, 127.0.0.1:64201][0m
+INFO 2026-07-17 11:58:48,254 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:58865]
+INFO 2026-07-17 11:58:48,255 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:58865]
+INFO 2026-07-17 11:58:50,277 django.channels.server [mHTTP GET /login/ 200 [0.01, 127.0.0.1:58866][0m
+WARNING 2026-07-17 11:58:54,302 django.request Not Found: /nope-not-a-real-route/
+WARNING 2026-07-17 11:58:54,303 django.channels.server [33mHTTP GET /nope-not-a-real-route/ 404 [0.01, 127.0.0.1:58867][0m
+INFO 2026-07-17 11:58:58,309 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:58865]
+INFO 2026-07-17 11:59:04,536 django.channels.server [mHTTP GET /logs/ 200 [0.00, 127.0.0.1:58677][0m
+INFO 2026-07-17 11:59:04,546 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52395]
+INFO 2026-07-17 11:59:04,583 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:64478]
+INFO 2026-07-17 11:59:04,585 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:64478]
+INFO 2026-07-17 11:59:05,800 django.channels.server [mHTTP GET /logs/ 200 [0.00, 127.0.0.1:58677][0m
+INFO 2026-07-17 11:59:05,807 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:64478]
+INFO 2026-07-17 11:59:05,838 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:49671]
+INFO 2026-07-17 11:59:05,841 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:49671]
+INFO 2026-07-17 11:59:18,398 django.channels.server [mHTTP POST /chat/ 200 [5.56, 127.0.0.1:64201][0m
+WARNING 2026-07-17 11:59:34,378 django.request Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2026-07-17 11:59:34,379 django.channels.server [33mHTTP GET /.well-known/appspecific/com.chrome.devtools.json 404 [0.01, 127.0.0.1:58677][0m
+INFO 2026-07-17 12:01:05,590 django.utils.autoreload C:\Users\Administrator\Downloads\Chat_with_document\ksp_chat\chatapp\views.py changed, reloading.
+INFO 2026-07-17 12:01:07,492 django.utils.autoreload Watching for file changes with StatReloader
+INFO 2026-07-17 12:01:10,761 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:58128]
+INFO 2026-07-17 12:01:10,764 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:58128]
+INFO 2026-07-17 12:01:15,981 django.utils.autoreload C:\Users\Administrator\Downloads\Chat_with_document\ksp_chat\chatapp\views.py changed, reloading.
+INFO 2026-07-17 12:01:17,934 django.utils.autoreload Watching for file changes with StatReloader
+INFO 2026-07-17 12:01:25,256 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:59068]
+INFO 2026-07-17 12:01:25,259 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:59068]
+INFO 2026-07-17 12:01:30,502 django.utils.autoreload C:\Users\Administrator\Downloads\Chat_with_document\ksp_chat\chatapp\views.py changed, reloading.
+INFO 2026-07-17 12:01:32,116 django.utils.autoreload Watching for file changes with StatReloader
+INFO 2026-07-17 12:01:34,776 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:57651]
+INFO 2026-07-17 12:01:34,778 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:57651]
+INFO 2026-07-17 12:01:37,390 django.utils.autoreload C:\Users\Administrator\Downloads\Chat_with_document\ksp_chat\chatapp\views.py changed, reloading.
+INFO 2026-07-17 12:01:38,938 django.utils.autoreload Watching for file changes with StatReloader
+INFO 2026-07-17 12:01:41,756 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52208]
+INFO 2026-07-17 12:01:41,758 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:52208]
+INFO 2026-07-17 12:01:44,095 django.utils.autoreload C:\Users\Administrator\Downloads\Chat_with_document\ksp_chat\chatapp\views.py changed, reloading.
+INFO 2026-07-17 12:01:45,653 django.utils.autoreload Watching for file changes with StatReloader
+INFO 2026-07-17 12:01:48,252 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:64649]
+INFO 2026-07-17 12:01:48,254 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:64649]
+INFO 2026-07-17 12:01:54,296 django.utils.autoreload C:\Users\Administrator\Downloads\Chat_with_document\ksp_chat\chatapp\auth_views.py changed, reloading.
+INFO 2026-07-17 12:01:56,026 django.utils.autoreload Watching for file changes with StatReloader
+INFO 2026-07-17 12:02:00,161 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:61321]
+INFO 2026-07-17 12:02:00,163 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:61321]
+INFO 2026-07-17 12:02:02,800 django.utils.autoreload C:\Users\Administrator\Downloads\Chat_with_document\ksp_chat\chatapp\auth_views.py changed, reloading.
+INFO 2026-07-17 12:02:04,427 django.utils.autoreload Watching for file changes with StatReloader
+INFO 2026-07-17 12:02:07,416 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:53511]
+INFO 2026-07-17 12:02:07,418 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:53511]
+INFO 2026-07-17 12:02:14,506 django.utils.autoreload C:\Users\Administrator\Downloads\Chat_with_document\ksp_chat\chatapp\auth_views.py changed, reloading.
+INFO 2026-07-17 12:02:16,094 django.utils.autoreload Watching for file changes with StatReloader
+INFO 2026-07-17 12:02:19,078 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:55343]
+INFO 2026-07-17 12:02:19,079 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:55343]
+INFO 2026-07-17 12:03:15,537 django.channels.server [mHTTP GET / 200 [1.25, 127.0.0.1:55357][0m
+INFO 2026-07-17 12:03:15,559 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:55358]
+INFO 2026-07-17 12:03:15,560 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:55358]
+INFO 2026-07-17 12:03:15,968 chatapp.views New chat session created: ble11y8hjcsi8yawkf8div6pprup2xz4
+INFO 2026-07-17 12:03:16,002 django.channels.server [mHTTP POST /new-session/ 200 [0.44, 127.0.0.1:55357][0m
+INFO 2026-07-17 12:03:16,004 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:55358]
+INFO 2026-07-17 12:04:53,874 django.channels.server [mHTTP GET / 200 [0.03, 127.0.0.1:60387][0m
+INFO 2026-07-17 12:04:53,893 django.channels.server [36mHTTP GET /static/chatapp/css/style.css 304 [0.00, 127.0.0.1:60387][0m
+INFO 2026-07-17 12:04:53,895 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.00, 127.0.0.1:64067][0m
+INFO 2026-07-17 12:04:55,891 django.channels.server [mHTTP GET /logs/ 200 [0.00, 127.0.0.1:64067][0m
+INFO 2026-07-17 12:04:55,908 django.channels.server [36mHTTP GET /static/chatapp/js/logs.js 304 [0.00, 127.0.0.1:64067][0m
+INFO 2026-07-17 12:04:55,912 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52198]
+INFO 2026-07-17 12:04:55,915 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:52198]
+INFO 2026-07-17 12:04:58,158 django.channels.server [mHTTP GET / 200 [0.01, 127.0.0.1:64067][0m
+INFO 2026-07-17 12:04:58,163 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52198]
+INFO 2026-07-17 12:04:58,175 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.00, 127.0.0.1:64067][0m
+INFO 2026-07-17 12:05:02,158 django.channels.server [mHTTP GET /load-session/pasam3kh7duzl1bgl5933xzjb5ggu6qe/ 200 [0.04, 127.0.0.1:64067][0m
+INFO 2026-07-17 12:05:20,940 chatapp.views Question asked in session pasam3kh7duzl1bgl5933xzjb5ggu6qe: what do you remember from all our conversations
+INFO 2026-07-17 12:05:28,829 chatapp.views Answer generated for session pasam3kh7duzl1bgl5933xzjb5ggu6qe (1525 chars)
+INFO 2026-07-17 12:05:30,626 django.channels.server [mHTTP POST /chat/ 200 [9.69, 127.0.0.1:64067][0m
+INFO 2026-07-17 12:05:42,361 django.channels.server [mHTTP GET /logs/ 200 [0.00, 127.0.0.1:64067][0m
+INFO 2026-07-17 12:05:42,381 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:58955]
+INFO 2026-07-17 12:05:42,384 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:58955]
+INFO 2026-07-17 12:05:52,649 django.channels.server [mHTTP GET /logs/ 200 [0.00, 127.0.0.1:53981][0m
+INFO 2026-07-17 12:05:52,656 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:55343]
+INFO 2026-07-17 12:05:52,688 django.channels.server [36mHTTP GET /static/chatapp/css/style.css 304 [0.00, 127.0.0.1:53981][0m
+INFO 2026-07-17 12:05:52,692 django.channels.server [36mHTTP GET /static/chatapp/js/logs.js 304 [0.00, 127.0.0.1:51203][0m
+INFO 2026-07-17 12:05:52,699 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:57593]
+INFO 2026-07-17 12:05:52,700 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:57593]
+INFO 2026-07-17 12:06:08,654 django.channels.server [mHTTP GET / 200 [0.02, 127.0.0.1:51203][0m
+INFO 2026-07-17 12:06:36,194 chatapp.views Document 'Diksha_Gyamlani_Resume.pdf' uploaded to session dl3q9kx8b47ofrdfpugplhafx30brv9r (5 chunks)
+INFO 2026-07-17 12:06:36,204 django.channels.server [mHTTP POST /upload/ 200 [6.38, 127.0.0.1:51203][0m
+INFO 2026-07-17 12:07:34,544 chatapp.views Question asked in session dl3q9kx8b47ofrdfpugplhafx30brv9r: hi
+INFO 2026-07-17 12:07:38,176 chatapp.views Answer generated for session dl3q9kx8b47ofrdfpugplhafx30brv9r (94 chars)
+INFO 2026-07-17 12:07:39,476 django.channels.server [mHTTP POST /chat/ 200 [4.94, 127.0.0.1:51203][0m
+INFO 2026-07-17 12:08:24,185 chatapp.views Question asked in session dl3q9kx8b47ofrdfpugplhafx30brv9r: summaries this resume info for me
+INFO 2026-07-17 12:08:29,697 django.channels.server [mHTTP GET /logs/ 200 [0.01, 127.0.0.1:57160][0m
+INFO 2026-07-17 12:08:29,741 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:61540]
+INFO 2026-07-17 12:08:29,743 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:61540]
+INFO 2026-07-17 12:08:31,776 chatapp.views Answer generated for session dl3q9kx8b47ofrdfpugplhafx30brv9r (2422 chars)
+INFO 2026-07-17 12:08:36,036 django.channels.server [mHTTP GET / 200 [0.01, 127.0.0.1:57160][0m
+INFO 2026-07-17 12:09:59,433 chatapp.auth_views User 'Rudraksh' logged out
+INFO 2026-07-17 12:09:59,446 django.channels.server [32mHTTP POST /logout/ 302 [0.11, 127.0.0.1:64026][0m
+INFO 2026-07-17 12:09:59,463 django.channels.server [mHTTP GET /login/ 200 [0.01, 127.0.0.1:64026][0m
+INFO 2026-07-17 12:09:59,503 django.channels.server [36mHTTP GET /static/chatapp/css/style.css 304 [0.00, 127.0.0.1:64026][0m
+WARNING 2026-07-17 12:10:15,955 chatapp.auth_views Failed login attempt for username 'Rudraksh'
+INFO 2026-07-17 12:10:15,958 django.channels.server [mHTTP POST /login/ 200 [0.23, 127.0.0.1:64026][0m
+INFO 2026-07-17 12:10:29,073 chatapp.auth_views User 'Rudraksh' logged in
+INFO 2026-07-17 12:10:29,078 django.channels.server [32mHTTP POST /login/ 302 [0.21, 127.0.0.1:64026][0m
+INFO 2026-07-17 12:10:29,095 django.channels.server [mHTTP GET / 200 [0.01, 127.0.0.1:64026][0m
+INFO 2026-07-17 12:11:44,314 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:61540]
+INFO 2026-07-17 12:11:44,316 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:57593]
+INFO 2026-07-17 12:22:45,973 django.channels.server [mHTTP GET /logs/ 200 [0.01, 127.0.0.1:63733][0m
+INFO 2026-07-17 12:22:45,978 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:58955]
+INFO 2026-07-17 12:22:46,028 django.channels.server [36mHTTP GET /static/chatapp/css/style.css 304 [0.03, 127.0.0.1:63733][0m
+INFO 2026-07-17 12:22:46,031 django.channels.server [36mHTTP GET /static/chatapp/js/logs.js 304 [0.01, 127.0.0.1:63805][0m
+INFO 2026-07-17 12:22:46,036 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:50490]
+INFO 2026-07-17 12:22:46,038 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:50490]
+INFO 2026-07-17 12:45:56,441 django.utils.autoreload C:\Users\Administrator\Downloads\Chat_with_document\ksp_chat\chatapp\views.py changed, reloading.
+INFO 2026-07-17 12:45:58,228 django.utils.autoreload Watching for file changes with StatReloader
+INFO 2026-07-17 12:46:01,160 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:53528]
+INFO 2026-07-17 12:46:01,162 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:53528]
+INFO 2026-07-17 12:46:01,163 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:53528]
+INFO 2026-07-17 12:46:03,189 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:64601]
+INFO 2026-07-17 12:46:03,191 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:64601]
+INFO 2026-07-17 12:46:03,191 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:64601]
+INFO 2026-07-17 12:46:05,199 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:55555]
+INFO 2026-07-17 12:46:05,201 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:55555]
+INFO 2026-07-17 12:46:05,202 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:55555]
+INFO 2026-07-17 12:46:07,214 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:61054]
+INFO 2026-07-17 12:46:07,215 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:61054]
+INFO 2026-07-17 12:46:07,216 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:61054]
+INFO 2026-07-17 12:46:09,221 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:55739]
+INFO 2026-07-17 12:46:09,222 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:55739]
+INFO 2026-07-17 12:46:09,223 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:55739]
+INFO 2026-07-17 12:46:11,239 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:51948]
+INFO 2026-07-17 12:46:11,241 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:51948]
+INFO 2026-07-17 12:46:11,242 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:51948]
+INFO 2026-07-17 12:46:13,266 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:50531]
+INFO 2026-07-17 12:46:13,269 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:50531]
+INFO 2026-07-17 12:46:13,271 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:50531]
+INFO 2026-07-17 12:46:15,290 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:64197]
+INFO 2026-07-17 12:46:15,291 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:64197]
+INFO 2026-07-17 12:46:15,292 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:64197]
+INFO 2026-07-17 12:46:17,323 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:59932]
+INFO 2026-07-17 12:46:17,324 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:59932]
+INFO 2026-07-17 12:46:17,324 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:59932]
+INFO 2026-07-17 12:46:19,382 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:61802]
+INFO 2026-07-17 12:46:19,383 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:61802]
+INFO 2026-07-17 12:46:19,383 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:61802]
+INFO 2026-07-17 12:46:21,478 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:54716]
+INFO 2026-07-17 12:46:22,126 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:54716]
+INFO 2026-07-17 12:46:22,126 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:54716]
+INFO 2026-07-17 12:46:24,210 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:60820]
+INFO 2026-07-17 12:46:24,435 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:60820]
+INFO 2026-07-17 12:46:24,436 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:60820]
+INFO 2026-07-17 12:46:26,678 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:51112]
+INFO 2026-07-17 12:46:26,679 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:51112]
+INFO 2026-07-17 12:46:26,680 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:51112]
+INFO 2026-07-17 12:46:29,194 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:61843]
+INFO 2026-07-17 12:46:29,195 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:61843]
+INFO 2026-07-17 12:46:29,195 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:61843]
+INFO 2026-07-17 12:46:32,436 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:64732]
+INFO 2026-07-17 12:46:32,437 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:64732]
+INFO 2026-07-17 12:46:32,438 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:64732]
+INFO 2026-07-17 12:46:35,373 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:60812]
+INFO 2026-07-17 12:46:35,376 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:60812]
+INFO 2026-07-17 12:46:35,378 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:60812]
+INFO 2026-07-17 12:46:38,853 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:58201]
+INFO 2026-07-17 12:46:38,855 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:58201]
+INFO 2026-07-17 12:46:38,856 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:58201]
+INFO 2026-07-17 12:46:45,147 django.utils.autoreload C:\Users\Administrator\Downloads\Chat_with_document\ksp_chat\ksp_chat\settings.py changed, reloading.
+INFO 2026-07-17 12:46:47,775 django.utils.autoreload Watching for file changes with StatReloader
+INFO 2026-07-17 12:46:53,274 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:63971]
+INFO 2026-07-17 12:46:53,276 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:63971]
+INFO 2026-07-17 12:46:53,276 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:63971]
+INFO 2026-07-17 12:46:56,887 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:63992]
+INFO 2026-07-17 12:46:56,889 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:63992]
+INFO 2026-07-17 12:46:56,890 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:63992]
+INFO 2026-07-17 12:47:00,486 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:58998]
+INFO 2026-07-17 12:47:00,487 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:58998]
+INFO 2026-07-17 12:47:00,487 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:58998]
+INFO 2026-07-17 12:47:07,483 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52415]
+INFO 2026-07-17 12:47:07,484 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:52415]
+INFO 2026-07-17 12:47:07,484 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52415]
+INFO 2026-07-17 12:47:10,681 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:60035]
+INFO 2026-07-17 12:47:10,682 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:60035]
+INFO 2026-07-17 12:47:10,682 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:60035]
+INFO 2026-07-17 12:47:15,731 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:50956]
+INFO 2026-07-17 12:47:15,733 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:50956]
+INFO 2026-07-17 12:47:15,734 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:50956]
+INFO 2026-07-17 12:47:19,582 django.channels.server [mHTTP GET /logs/ 200 [0.10, 127.0.0.1:50961][0m
+INFO 2026-07-17 12:47:21,476 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:53240]
+INFO 2026-07-17 12:47:21,477 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:53240]
+INFO 2026-07-17 12:47:21,477 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:53240]
+INFO 2026-07-17 12:47:26,473 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:57764]
+INFO 2026-07-17 12:47:26,475 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:57764]
+INFO 2026-07-17 12:47:26,475 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:57764]
+INFO 2026-07-17 12:47:33,417 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:62524]
+INFO 2026-07-17 12:47:33,418 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:62524]
+INFO 2026-07-17 12:47:33,419 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:62524]
+INFO 2026-07-17 12:47:39,396 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:63911]
+INFO 2026-07-17 12:47:39,397 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:63911]
+INFO 2026-07-17 12:47:39,398 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:63911]
+INFO 2026-07-17 12:47:45,292 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:50375]
+INFO 2026-07-17 12:47:45,293 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:50375]
+INFO 2026-07-17 12:47:45,294 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:50375]
+INFO 2026-07-17 12:47:48,789 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52075]
+INFO 2026-07-17 12:47:48,790 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:52075]
+INFO 2026-07-17 12:47:48,791 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52075]
+INFO 2026-07-17 12:47:55,682 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:56139]
+INFO 2026-07-17 12:47:55,684 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:56139]
+INFO 2026-07-17 12:47:55,684 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:56139]
+INFO 2026-07-17 12:48:01,269 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:63642]
+INFO 2026-07-17 12:48:01,273 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:63642]
+INFO 2026-07-17 12:48:01,274 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:63642]
+INFO 2026-07-17 12:48:04,568 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:55875]
+INFO 2026-07-17 12:48:04,570 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:55875]
+INFO 2026-07-17 12:48:04,571 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:55875]
+INFO 2026-07-17 12:48:10,978 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:62654]
+INFO 2026-07-17 12:48:10,979 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:62654]
+INFO 2026-07-17 12:48:10,980 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:62654]
+INFO 2026-07-17 12:48:12,014 django.utils.autoreload C:\Users\Administrator\Downloads\Chat_with_document\ksp_chat\chatapp\views.py changed, reloading.
+INFO 2026-07-17 12:48:13,601 django.utils.autoreload Watching for file changes with StatReloader
+INFO 2026-07-17 12:48:16,850 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:58290]
+INFO 2026-07-17 12:48:16,851 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:58290]
+INFO 2026-07-17 12:48:16,851 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:58290]
+INFO 2026-07-17 12:48:20,612 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:51350]
+INFO 2026-07-17 12:48:20,616 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:51350]
+INFO 2026-07-17 12:48:20,618 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:51350]
+INFO 2026-07-17 12:48:25,716 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:60410]
+INFO 2026-07-17 12:48:25,718 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:60410]
+INFO 2026-07-17 12:48:25,719 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:60410]
+INFO 2026-07-17 12:48:31,384 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:50505]
+INFO 2026-07-17 12:48:31,387 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:50505]
+INFO 2026-07-17 12:48:31,389 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:50505]
+INFO 2026-07-17 12:48:33,656 django.channels.server [mHTTP GET /logs/ 200 [0.07, 127.0.0.1:50510][0m
+INFO 2026-07-17 12:48:33,716 django.channels.server [mHTTP GET /logs/ 200 [0.02, 127.0.0.1:50511][0m
+INFO 2026-07-17 12:48:36,087 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:56541]
+INFO 2026-07-17 12:48:36,089 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:56541]
+INFO 2026-07-17 12:48:36,090 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:56541]
+INFO 2026-07-17 12:48:39,362 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:49986]
+INFO 2026-07-17 12:48:39,366 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:49986]
+INFO 2026-07-17 12:48:39,367 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:49986]
+INFO 2026-07-17 12:48:42,420 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:57215]
+INFO 2026-07-17 12:48:42,421 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:57215]
+INFO 2026-07-17 12:48:42,422 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:57215]
+INFO 2026-07-17 12:48:46,952 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:60502]
+INFO 2026-07-17 12:48:46,954 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:60502]
+INFO 2026-07-17 12:48:46,954 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:60502]
+INFO 2026-07-17 12:48:53,655 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:50160]
+INFO 2026-07-17 12:48:53,658 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:50160]
+INFO 2026-07-17 12:48:53,660 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:50160]
+INFO 2026-07-17 12:48:57,129 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:65017]
+INFO 2026-07-17 12:48:57,130 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:65017]
+INFO 2026-07-17 12:48:57,131 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:65017]
+INFO 2026-07-17 12:49:02,497 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52763]
+INFO 2026-07-17 12:49:02,498 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:52763]
+INFO 2026-07-17 12:49:02,499 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52763]
+INFO 2026-07-17 12:49:06,102 django.channels.server [mHTTP GET /logs/ 200 [0.04, 127.0.0.1:52775][0m
+INFO 2026-07-17 12:49:06,217 django.channels.server [mHTTP GET / 200 [0.10, 127.0.0.1:52775][0m
+INFO 2026-07-17 12:49:06,252 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52777]
+INFO 2026-07-17 12:49:06,254 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:52777]
+INFO 2026-07-17 12:49:06,400 chatapp.views New chat session created: y1urg17liss2ju3pij8l2bd956bzlgx9
+INFO 2026-07-17 12:49:06,438 django.channels.server [mHTTP POST /new-session/ 200 [0.18, 127.0.0.1:52775][0m
+INFO 2026-07-17 12:49:06,446 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52777]
+INFO 2026-07-17 12:49:06,495 django.channels.server [mHTTP GET /logs/ 200 [0.04, 127.0.0.1:52775][0m
+INFO 2026-07-17 12:49:09,022 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:55415]
+INFO 2026-07-17 12:49:09,023 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:55415]
+INFO 2026-07-17 12:49:09,024 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:55415]
+INFO 2026-07-17 12:49:14,870 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52917]
+INFO 2026-07-17 12:49:14,871 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:52917]
+INFO 2026-07-17 12:49:14,872 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52917]
+INFO 2026-07-17 12:49:20,500 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:63524]
+INFO 2026-07-17 12:49:20,502 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:63524]
+INFO 2026-07-17 12:49:20,503 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:63524]
+INFO 2026-07-17 12:49:26,349 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:62833]
+INFO 2026-07-17 12:49:26,353 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:62833]
+INFO 2026-07-17 12:49:26,355 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:62833]
+INFO 2026-07-17 12:49:30,513 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:65433]
+INFO 2026-07-17 12:49:30,514 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:65433]
+INFO 2026-07-17 12:49:30,515 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:65433]
+INFO 2026-07-17 12:49:33,590 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:59267]
+INFO 2026-07-17 12:49:33,591 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:59267]
+INFO 2026-07-17 12:49:33,591 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:59267]
+INFO 2026-07-17 12:49:38,097 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:65513]
+INFO 2026-07-17 12:49:38,098 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:65513]
+INFO 2026-07-17 12:49:38,098 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:65513]
+INFO 2026-07-17 12:49:45,047 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:63434]
+INFO 2026-07-17 12:49:45,048 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:63434]
+INFO 2026-07-17 12:49:45,048 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:63434]
+INFO 2026-07-17 12:49:51,730 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:55419]
+INFO 2026-07-17 12:49:51,733 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:55419]
+INFO 2026-07-17 12:49:51,735 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:55419]
+INFO 2026-07-17 12:49:55,737 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:53229]
+INFO 2026-07-17 12:49:55,738 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:53229]
+INFO 2026-07-17 12:49:55,738 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:53229]
+INFO 2026-07-17 12:50:02,439 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:57482]
+INFO 2026-07-17 12:50:02,440 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:57482]
+INFO 2026-07-17 12:50:02,440 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:57482]
+INFO 2026-07-17 12:50:09,358 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:58422]
+INFO 2026-07-17 12:50:09,359 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:58422]
+INFO 2026-07-17 12:50:09,360 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:58422]
+INFO 2026-07-17 12:50:14,116 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:62526]
+INFO 2026-07-17 12:50:14,120 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:62526]
+INFO 2026-07-17 12:50:14,122 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:62526]
+INFO 2026-07-17 12:50:18,375 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:49359]
+INFO 2026-07-17 12:50:18,376 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:49359]
+INFO 2026-07-17 12:50:18,377 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:49359]
+INFO 2026-07-17 12:50:25,217 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:63982]
+INFO 2026-07-17 12:50:25,218 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:63982]
+INFO 2026-07-17 12:50:25,219 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:63982]
+INFO 2026-07-17 12:50:30,618 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:65446]
+INFO 2026-07-17 12:50:30,619 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:65446]
+INFO 2026-07-17 12:50:30,619 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:65446]
+INFO 2026-07-17 12:50:36,698 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:54712]
+INFO 2026-07-17 12:50:36,699 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:54712]
+INFO 2026-07-17 12:50:36,699 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:54712]
+INFO 2026-07-17 12:50:40,417 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:55181]
+INFO 2026-07-17 12:50:40,420 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:55181]
+INFO 2026-07-17 12:50:40,422 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:55181]
+INFO 2026-07-17 12:50:47,212 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:63588]
+INFO 2026-07-17 12:50:47,213 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:63588]
+INFO 2026-07-17 12:50:47,214 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:63588]
+INFO 2026-07-17 12:50:52,959 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:56657]
+INFO 2026-07-17 12:50:52,961 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:56657]
+INFO 2026-07-17 12:50:52,961 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:56657]
+INFO 2026-07-17 12:50:56,034 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:60070]
+INFO 2026-07-17 12:50:56,037 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:60070]
+INFO 2026-07-17 12:50:56,038 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:60070]
+INFO 2026-07-17 12:50:59,685 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:65375]
+INFO 2026-07-17 12:50:59,686 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:65375]
+INFO 2026-07-17 12:50:59,686 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:65375]
+INFO 2026-07-17 12:51:06,050 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:50364]
+INFO 2026-07-17 12:51:06,054 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:50364]
+INFO 2026-07-17 12:51:06,055 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:50364]
+INFO 2026-07-17 12:51:09,129 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:56003]
+INFO 2026-07-17 12:51:09,131 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:56003]
+INFO 2026-07-17 12:51:09,131 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:56003]
+INFO 2026-07-17 12:51:13,629 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:57696]
+INFO 2026-07-17 12:51:13,633 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:57696]
+INFO 2026-07-17 12:51:13,635 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:57696]
+INFO 2026-07-17 12:51:20,524 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52101]
+INFO 2026-07-17 12:51:20,528 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:52101]
+INFO 2026-07-17 12:51:20,530 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52101]
+INFO 2026-07-17 12:51:26,617 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:54797]
+INFO 2026-07-17 12:51:26,618 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:54797]
+INFO 2026-07-17 12:51:26,618 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:54797]
+INFO 2026-07-17 12:51:32,604 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:57659]
+INFO 2026-07-17 12:51:32,607 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:57659]
+INFO 2026-07-17 12:51:32,608 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:57659]
+INFO 2026-07-17 12:51:36,976 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52406]
+INFO 2026-07-17 12:51:36,979 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:52406]
+INFO 2026-07-17 12:51:36,981 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52406]
+INFO 2026-07-17 12:51:42,207 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:60942]
+INFO 2026-07-17 12:51:42,207 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:60942]
+INFO 2026-07-17 12:51:42,208 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:60942]
+INFO 2026-07-17 12:51:48,574 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:59743]
+INFO 2026-07-17 12:51:48,575 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:59743]
+INFO 2026-07-17 12:51:48,575 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:59743]
+INFO 2026-07-17 12:51:55,068 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:63458]
+INFO 2026-07-17 12:51:55,070 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:63458]
+INFO 2026-07-17 12:51:55,070 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:63458]
+INFO 2026-07-17 12:51:59,697 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:50288]
+INFO 2026-07-17 12:51:59,700 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:50288]
+INFO 2026-07-17 12:51:59,701 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:50288]
+INFO 2026-07-17 12:52:06,560 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:61288]
+INFO 2026-07-17 12:52:06,562 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:61288]
+INFO 2026-07-17 12:52:06,562 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:61288]
+INFO 2026-07-17 12:52:10,824 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:62460]
+INFO 2026-07-17 12:52:10,826 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:62460]
+INFO 2026-07-17 12:52:10,827 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:62460]
+INFO 2026-07-17 12:52:14,319 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:56452]
+INFO 2026-07-17 12:52:14,321 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:56452]
+INFO 2026-07-17 12:52:14,321 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:56452]
+INFO 2026-07-17 12:52:17,833 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:60428]
+INFO 2026-07-17 12:52:17,834 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:60428]
+INFO 2026-07-17 12:52:17,835 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:60428]
+INFO 2026-07-17 12:52:22,218 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52853]
+INFO 2026-07-17 12:52:22,219 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:52853]
+INFO 2026-07-17 12:52:22,220 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52853]
+INFO 2026-07-17 12:52:29,078 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52742]
+INFO 2026-07-17 12:52:29,080 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:52742]
+INFO 2026-07-17 12:52:29,082 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52742]
+INFO 2026-07-17 12:52:34,055 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:55513]
+INFO 2026-07-17 12:52:34,056 django.channels.server WebSocket REJECT /ws/logs/ [127.0.0.1:55513]
+INFO 2026-07-17 12:52:34,057 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:55513]
+INFO 2026-07-17 12:52:36,752 django.channels.server [32mHTTP GET /logs/ 302 [0.00, 127.0.0.1:65101][0m
+INFO 2026-07-17 12:52:36,761 django.channels.server [mHTTP GET /login/ 200 [0.01, 127.0.0.1:65101][0m
+INFO 2026-07-17 12:52:36,815 django.channels.server [36mHTTP GET /static/chatapp/css/auth.css 304 [0.04, 127.0.0.1:61889][0m
+INFO 2026-07-17 12:52:36,826 django.channels.server [36mHTTP GET /static/chatapp/css/style.css 304 [0.05, 127.0.0.1:65101][0m
+INFO 2026-07-17 12:52:44,164 chatapp.auth_views User 'Rudraksh' logged in
+INFO 2026-07-17 12:52:44,167 django.channels.server [32mHTTP POST /login/ 302 [0.24, 127.0.0.1:65101][0m
+INFO 2026-07-17 12:52:44,187 django.channels.server [mHTTP GET / 200 [0.01, 127.0.0.1:65101][0m
+INFO 2026-07-17 12:52:44,204 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.00, 127.0.0.1:65101][0m
+INFO 2026-07-17 12:52:46,765 django.channels.server [mHTTP GET /logs/ 200 [0.03, 127.0.0.1:65101][0m
+INFO 2026-07-17 12:52:46,838 django.channels.server [mHTTP GET /static/chatapp/js/logs.js 200 [0.06, 127.0.0.1:65101][0m
+INFO 2026-07-17 12:52:51,397 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:50160]
+INFO 2026-07-17 12:52:51,398 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:50160]
+INFO 2026-07-17 12:53:38,880 django.channels.server [mHTTP GET / 200 [0.01, 127.0.0.1:65101][0m
+INFO 2026-07-17 12:53:38,892 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:50160]
+INFO 2026-07-17 12:53:38,904 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.00, 127.0.0.1:65101][0m
+INFO 2026-07-17 13:31:37,177 django.channels.server [mHTTP GET /logs/ 200 [0.01, 127.0.0.1:60898][0m
+INFO 2026-07-17 13:31:37,198 django.channels.server [36mHTTP GET /static/chatapp/css/style.css 304 [0.00, 127.0.0.1:60898][0m
+INFO 2026-07-17 13:31:37,200 django.channels.server [36mHTTP GET /static/chatapp/js/logs.js 304 [0.00, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:31:37,329 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:65118]
+INFO 2026-07-17 13:31:37,330 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:65118]
+INFO 2026-07-17 13:31:49,621 django.channels.server [mHTTP GET /logs/ 200 [0.04, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:31:49,627 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:65118]
+INFO 2026-07-17 13:31:49,759 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52096]
+INFO 2026-07-17 13:31:49,760 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:52096]
+INFO 2026-07-17 13:31:53,075 django.channels.server [mHTTP GET /logs/ 200 [0.02, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:31:53,084 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52096]
+INFO 2026-07-17 13:31:53,325 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:59612]
+INFO 2026-07-17 13:31:53,356 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:59612]
+INFO 2026-07-17 13:31:54,578 django.channels.server [mHTTP GET /logs/ 200 [0.04, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:31:54,599 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:59612]
+INFO 2026-07-17 13:31:54,773 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52755]
+INFO 2026-07-17 13:31:54,774 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:52755]
+INFO 2026-07-17 13:31:56,345 django.channels.server [mHTTP GET /logs/ 200 [0.04, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:31:56,363 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52755]
+INFO 2026-07-17 13:31:56,505 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:61449]
+INFO 2026-07-17 13:31:56,506 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:61449]
+INFO 2026-07-17 13:32:02,545 django.channels.server [mHTTP GET /logs/ 200 [0.01, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:32:02,551 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:61449]
+INFO 2026-07-17 13:32:02,690 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:56735]
+INFO 2026-07-17 13:32:02,691 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:56735]
+INFO 2026-07-17 13:32:04,752 django.channels.server [mHTTP GET /logs/ 200 [0.03, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:32:04,758 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:56735]
+INFO 2026-07-17 13:32:04,933 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:57928]
+INFO 2026-07-17 13:32:04,934 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:57928]
+INFO 2026-07-17 13:32:05,080 django.channels.server [mHTTP GET /logs/ 200 [0.01, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:32:05,087 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:57928]
+INFO 2026-07-17 13:32:05,242 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52779]
+INFO 2026-07-17 13:32:05,243 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:52779]
+INFO 2026-07-17 13:32:05,428 django.channels.server [mHTTP GET /logs/ 200 [0.04, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:32:05,435 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52779]
+INFO 2026-07-17 13:32:05,584 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:56937]
+INFO 2026-07-17 13:32:05,585 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:56937]
+INFO 2026-07-17 13:32:05,773 django.channels.server [mHTTP GET /logs/ 200 [0.03, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:32:05,781 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:56937]
+INFO 2026-07-17 13:32:05,933 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:53792]
+INFO 2026-07-17 13:32:05,934 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:53792]
+INFO 2026-07-17 13:32:06,081 django.channels.server [mHTTP GET /logs/ 200 [0.01, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:32:06,087 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:53792]
+INFO 2026-07-17 13:32:06,236 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:56201]
+INFO 2026-07-17 13:32:06,237 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:56201]
+INFO 2026-07-17 13:32:06,422 django.channels.server [mHTTP GET /logs/ 200 [0.02, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:32:06,428 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:56201]
+INFO 2026-07-17 13:32:06,596 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:57985]
+INFO 2026-07-17 13:32:06,598 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:57985]
+INFO 2026-07-17 13:32:06,799 django.channels.server [mHTTP GET /logs/ 200 [0.03, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:32:06,806 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:57985]
+INFO 2026-07-17 13:32:06,994 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:51629]
+INFO 2026-07-17 13:32:06,995 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:51629]
+INFO 2026-07-17 13:32:07,353 django.channels.server [mHTTP GET /logs/ 200 [0.01, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:32:07,364 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:51629]
+INFO 2026-07-17 13:32:07,543 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:51482]
+INFO 2026-07-17 13:32:07,546 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:51482]
+INFO 2026-07-17 13:32:07,718 django.channels.server [mHTTP GET /logs/ 200 [0.01, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:32:07,726 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:51482]
+INFO 2026-07-17 13:32:07,884 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:64340]
+INFO 2026-07-17 13:32:07,886 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:64340]
+INFO 2026-07-17 13:32:08,142 django.channels.server [mHTTP GET /logs/ 200 [0.02, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:32:08,150 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:64340]
+INFO 2026-07-17 13:32:08,321 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:50879]
+INFO 2026-07-17 13:32:08,322 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:50879]
+INFO 2026-07-17 13:32:08,558 django.channels.server [mHTTP GET /logs/ 200 [0.05, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:32:08,564 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:50879]
+INFO 2026-07-17 13:32:08,731 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:59042]
+INFO 2026-07-17 13:32:08,732 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:59042]
+INFO 2026-07-17 13:32:08,922 django.channels.server [mHTTP GET /logs/ 200 [0.03, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:32:08,931 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:59042]
+INFO 2026-07-17 13:32:09,157 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52352]
+INFO 2026-07-17 13:32:09,160 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:52352]
+INFO 2026-07-17 13:32:09,435 django.channels.server [mHTTP GET /logs/ 200 [0.05, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:32:09,444 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52352]
+INFO 2026-07-17 13:32:09,665 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:50350]
+INFO 2026-07-17 13:32:09,666 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:50350]
+INFO 2026-07-17 13:32:09,935 django.channels.server [mHTTP GET /logs/ 200 [0.03, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:32:09,943 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:50350]
+INFO 2026-07-17 13:32:10,160 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:49998]
+INFO 2026-07-17 13:32:10,161 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:49998]
+INFO 2026-07-17 13:32:10,636 django.channels.server [mHTTP GET /logs/ 200 [0.01, 127.0.0.1:52541][0m
+INFO 2026-07-17 13:32:10,643 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:49998]
+INFO 2026-07-17 13:32:10,821 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:62905]
+INFO 2026-07-17 13:32:10,824 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:62905]
+INFO 2026-07-17 13:32:19,825 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:62905]
+INFO 2026-07-17 13:52:28,443 django.channels.server [mHTTP GET / 200 [0.39, 127.0.0.1:64452][0m
+INFO 2026-07-17 13:52:28,526 django.channels.server [36mHTTP GET /static/chatapp/css/style.css 304 [0.03, 127.0.0.1:64452][0m
+INFO 2026-07-17 13:52:28,527 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.03, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:52:31,002 django.channels.server [mHTTP GET /logs/ 200 [0.08, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:52:31,039 django.channels.server [36mHTTP GET /static/chatapp/js/logs.js 304 [0.00, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:52:31,293 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:58638]
+INFO 2026-07-17 13:52:31,296 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:58638]
+INFO 2026-07-17 13:52:49,401 django.channels.server [32mHTTP GET / 302 [0.04, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:52:49,407 django.channels.server [mHTTP GET /login/ 200 [0.00, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:52:49,414 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:58638]
+INFO 2026-07-17 13:52:49,433 django.channels.server [36mHTTP GET /static/chatapp/css/auth.css 304 [0.01, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:52:53,703 django.channels.server [mHTTP GET /login/ 200 [0.00, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:52:53,744 django.channels.server [36mHTTP GET /static/chatapp/css/auth.css 304 [0.00, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:02,522 chatapp.auth_views User 'Rudraksh' logged in
+INFO 2026-07-17 13:53:02,531 django.channels.server [32mHTTP POST /login/ 302 [2.18, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:02,557 django.channels.server [mHTTP GET / 200 [0.02, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:02,578 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.00, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:04,641 django.channels.server [mHTTP GET /logs/ 200 [0.49, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:04,932 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:59515]
+INFO 2026-07-17 13:53:04,933 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:59515]
+INFO 2026-07-17 13:53:07,047 django.channels.server [mHTTP GET / 200 [0.15, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:07,062 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:59515]
+INFO 2026-07-17 13:53:07,104 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.01, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:08,583 django.channels.server [mHTTP GET /logs/ 200 [0.11, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:08,838 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:57015]
+INFO 2026-07-17 13:53:08,840 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:57015]
+INFO 2026-07-17 13:53:10,554 django.channels.server [mHTTP GET / 200 [0.39, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:10,650 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:57015]
+INFO 2026-07-17 13:53:10,742 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.01, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:38,489 django.channels.server [mHTTP GET / 200 [0.02, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:38,530 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.00, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:40,457 django.channels.server [mHTTP GET / 200 [0.04, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:40,658 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.00, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:42,787 django.channels.server [mHTTP GET /logs/ 200 [0.07, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:45,094 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:64817]
+INFO 2026-07-17 13:53:45,121 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:64817]
+INFO 2026-07-17 13:53:46,973 django.channels.server [mHTTP GET / 200 [0.51, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:46,989 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:64817]
+INFO 2026-07-17 13:53:47,035 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.01, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:59,756 django.channels.server [mHTTP GET / 200 [0.94, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:53:59,777 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.00, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:54:07,991 django.channels.server [mHTTP GET /load-session/treswcgybo5guwltb5s16p9gc3znlu9t/ 200 [1.24, 127.0.0.1:61261][0m
+INFO 2026-07-17 13:54:23,113 chatapp.views Session treswcgybo5guwltb5s16p9gc3znlu9t renamed to 'Something something'
+INFO 2026-07-17 13:54:23,118 django.channels.server [mHTTP POST /rename-session/treswcgybo5guwltb5s16p9gc3znlu9t/ 200 [0.13, 127.0.0.1:61261][0m
+INFO 2026-07-17 14:05:58,083 django.channels.server [mHTTP GET /logs/ 200 [0.73, 127.0.0.1:61181][0m
+INFO 2026-07-17 14:05:58,145 django.channels.server [36mHTTP GET /static/chatapp/js/logs.js 304 [0.02, 127.0.0.1:61181][0m
+INFO 2026-07-17 14:05:58,712 django.channels.server WebSocket HANDSHAKING /ws/logs/ [127.0.0.1:52074]
+INFO 2026-07-17 14:05:58,715 django.channels.server WebSocket CONNECT /ws/logs/ [127.0.0.1:52074]
+INFO 2026-07-17 14:13:37,631 django.channels.server [mHTTP GET / 200 [1.35, 127.0.0.1:64162][0m
+INFO 2026-07-17 14:13:37,659 django.channels.server WebSocket DISCONNECT /ws/logs/ [127.0.0.1:52074]
+INFO 2026-07-17 14:13:37,850 django.channels.server [36mHTTP GET /static/chatapp/css/style.css 304 [0.02, 127.0.0.1:64162][0m
+INFO 2026-07-17 14:13:37,853 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.01, 127.0.0.1:54161][0m
+INFO 2026-07-17 14:14:20,432 chatapp.views Question asked in session treswcgybo5guwltb5s16p9gc3znlu9t: what have discussed in all of our conversations
+ERROR 2026-07-17 14:14:46,420 chatapp.services Gemini generation failed
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Downloads\Chat_with_document\ksp_chat\chatapp\services.py", line 240, in query
+    return self._llm.generate(
+           ~~~~~~~~~~~~~~~~~~^
+        system_prompt=system_prompt,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        history=current_session_history,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        question=question,
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\ksp_chat\chatapp\llm.py", line 83, in generate
+    response = self._client.models.generate_content(
+        model=self.MODEL,
+        contents=contents,
+    )
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\google\genai\models.py", line 6526, in generate_content
+    response = self._generate_content(
+        model=model, contents=contents, config=parsed_config_to_call
+    )
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\google\genai\models.py", line 4954, in _generate_content
+    response = self._api_client.request(
+        'post', path, request_dict, http_options
+    )
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\google\genai\_api_client.py", line 1618, in request
+    response = self._request(http_request, http_options, stream=False)
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\google\genai\_api_client.py", line 1411, in _request
+    return self._retry(self._request_once, http_request, stream)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\tenacity\__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\tenacity\__init__.py", line 371, in iter
+    result = action(retry_state)
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\tenacity\__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+          ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\tenacity\__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+          ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Administrator\AppData\Local\Python\pythoncore-3.14-64\Lib\concurrent\futures\_base.py", line 443, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Administrator\AppData\Local\Python\pythoncore-3.14-64\Lib\concurrent\futures\_base.py", line 395, in __get_result
+    raise self._exception
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\tenacity\__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\google\genai\_api_client.py", line 1388, in _request_once
+    errors.APIError.raise_for_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\google\genai\errors.py", line 155, in raise_for_response
+    cls.raise_error(response.status_code, response_json, response)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\google\genai\errors.py", line 186, in raise_error
+    raise ServerError(status_code, response_json, response)
+google.genai.errors.ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+ERROR 2026-07-17 14:14:49,460 django.request Bad Gateway: /chat/
+ERROR 2026-07-17 14:14:49,468 django.channels.server [35;1mHTTP POST /chat/ 502 [29.31, 127.0.0.1:54161][0m
+INFO 2026-07-17 14:15:35,472 chatapp.views Question asked in session treswcgybo5guwltb5s16p9gc3znlu9t: try agian
+INFO 2026-07-17 14:15:44,600 chatapp.views Answer generated for session treswcgybo5guwltb5s16p9gc3znlu9t (516 chars)
+ERROR 2026-07-17 14:15:45,591 django.request Internal Server Error: /chat/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\backends\sqlite3\base.py", line 359, in execute
+    return super().execute(query, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+sqlite3.OperationalError: database or disk is full
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\asgiref\sync.py", line 557, in thread_handler
+    raise exc_info[1]
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\core\handlers\exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\asgiref\sync.py", line 557, in thread_handler
+    raise exc_info[1]
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\core\handlers\base.py", line 254, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\asgiref\sync.py", line 506, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\asgiref\current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\asgiref\sync.py", line 561, in thread_handler
+    return func(*args, **kwargs)
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\views\decorators\http.py", line 64, in inner
+    return func(request, *args, **kwargs)
+  File "C:\Users\Administrator\Downloads\Chat_with_document\ksp_chat\chatapp\authentication.py", line 60, in wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Administrator\Downloads\Chat_with_document\ksp_chat\chatapp\views.py", line 366, in chat_api
+    user_msg = ChatMessage.objects.create(session=chat_session, role="user", content=question)
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\models\query.py", line 669, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\models\base.py", line 874, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\models\base.py", line 966, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\models\base.py", line 1169, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, insert_fields, returning_fields, raw
+    )
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\models\base.py", line 1220, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\models\query.py", line 1918, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1925, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Downloads\Chat_with_document\.venv\Lib\site-packages\django\db\backends\sqlite3\base.py", line 359, in execute
+    return super().execute(query, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: database or disk is full
+INFO 2026-07-17 14:17:45,095 django.channels.server [32mHTTP GET / 302 [0.01, 127.0.0.1:58619][0m
+INFO 2026-07-17 14:17:45,112 django.channels.server [mHTTP GET /login/ 200 [0.01, 127.0.0.1:58619][0m
+INFO 2026-07-17 14:17:47,131 django.channels.server [mHTTP GET /static/chatapp/css/style.css 200 [0.06, 127.0.0.1:58619][0m
+INFO 2026-07-17 14:17:47,217 django.channels.server [mHTTP GET /static/chatapp/css/auth.css 200 [0.15, 127.0.0.1:51445][0m
+WARNING 2026-07-17 14:17:47,495 django.request Not Found: /favicon.ico
+WARNING 2026-07-17 14:17:47,499 django.channels.server [33mHTTP GET /favicon.ico 404 [0.03, 127.0.0.1:51445][0m
+INFO 2026-07-17 14:18:14,610 chatapp.auth_views User 'Rudraksh' logged out
+INFO 2026-07-17 14:18:14,623 django.channels.server [32mHTTP POST /logout/ 302 [0.65, 127.0.0.1:62904][0m
+INFO 2026-07-17 14:18:14,667 django.channels.server [mHTTP GET /login/ 200 [0.01, 127.0.0.1:62904][0m
+INFO 2026-07-17 14:18:14,718 django.channels.server [36mHTTP GET /static/chatapp/css/auth.css 304 [0.01, 127.0.0.1:62904][0m
+INFO 2026-07-17 14:19:33,675 chatapp.auth_views User 'Rudraksh' logged in
+INFO 2026-07-17 14:19:33,688 django.channels.server [32mHTTP POST /login/ 302 [1.60, 127.0.0.1:52582][0m
+INFO 2026-07-17 14:19:33,828 django.channels.server [mHTTP GET / 200 [0.06, 127.0.0.1:52582][0m
+INFO 2026-07-17 14:19:33,908 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.01, 127.0.0.1:52582][0m
+INFO 2026-07-17 14:19:39,359 chatapp.auth_views User 'Rudraksh' logged out
+INFO 2026-07-17 14:19:39,369 django.channels.server [32mHTTP POST /logout/ 302 [0.74, 127.0.0.1:52582][0m
+INFO 2026-07-17 14:19:39,395 django.channels.server [mHTTP GET /login/ 200 [0.02, 127.0.0.1:52582][0m
+INFO 2026-07-17 14:19:39,482 django.channels.server [36mHTTP GET /static/chatapp/css/auth.css 304 [0.01, 127.0.0.1:52582][0m
+INFO 2026-07-17 14:19:43,722 django.channels.server [mHTTP GET /register/ 200 [2.43, 127.0.0.1:52582][0m
+INFO 2026-07-17 14:19:43,776 django.channels.server [36mHTTP GET /static/chatapp/css/auth.css 304 [0.01, 127.0.0.1:52582][0m
+INFO 2026-07-17 14:21:21,703 chatapp.auth_views New user registered: 'Vineet'
+INFO 2026-07-17 14:21:21,719 django.channels.server [32mHTTP POST /register/ 302 [2.03, 127.0.0.1:61468][0m
+INFO 2026-07-17 14:21:21,776 django.channels.server [mHTTP GET /login/ 200 [0.03, 127.0.0.1:61468][0m
+INFO 2026-07-17 14:21:22,772 django.channels.server [36mHTTP GET /static/chatapp/css/auth.css 304 [0.85, 127.0.0.1:61468][0m
+INFO 2026-07-17 14:21:41,038 chatapp.auth_views User 'Vineet' logged in
+INFO 2026-07-17 14:21:41,056 django.channels.server [32mHTTP POST /login/ 302 [1.44, 127.0.0.1:61468][0m
+INFO 2026-07-17 14:21:41,129 django.channels.server [mHTTP GET / 200 [0.04, 127.0.0.1:61468][0m
+INFO 2026-07-17 14:21:41,232 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.02, 127.0.0.1:61468][0m
+INFO 2026-07-17 16:57:18,560 django.utils.autoreload Watching for file changes with StatReloader
+INFO 2026-07-17 16:57:46,130 django.channels.server [32mHTTP GET / 302 [2.68, 127.0.0.1:51004][0m
+INFO 2026-07-17 16:57:46,194 django.channels.server [mHTTP GET /login/ 200 [0.05, 127.0.0.1:51004][0m
+INFO 2026-07-17 16:57:46,223 django.channels.server [36mHTTP GET /static/chatapp/css/style.css 304 [0.01, 127.0.0.1:51004][0m
+INFO 2026-07-17 16:57:46,224 django.channels.server [36mHTTP GET /static/chatapp/css/auth.css 304 [0.01, 127.0.0.1:64332][0m
+INFO 2026-07-17 16:57:46,287 django.channels.server [36mHTTP GET /static/chatapp/css/auth.css 304 [0.00, 127.0.0.1:64332][0m
+INFO 2026-07-17 16:58:14,726 chatapp.auth_views User 'Rudraksh' logged in
+INFO 2026-07-17 16:58:14,746 django.channels.server [32mHTTP POST /login/ 302 [3.74, 127.0.0.1:64332][0m
+INFO 2026-07-17 16:58:14,797 django.channels.server [mHTTP GET / 200 [0.05, 127.0.0.1:64332][0m
+INFO 2026-07-17 16:58:14,816 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.00, 127.0.0.1:64332][0m
+INFO 2026-07-19 14:11:53,170 django.utils.autoreload Watching for file changes with StatReloader
+INFO 2026-07-19 14:19:14,961 django.channels.server [32mHTTP GET / 302 [0.06, 127.0.0.1:55550][0m
+INFO 2026-07-19 14:19:15,127 django.channels.server [mHTTP GET /login/ 200 [0.13, 127.0.0.1:55550][0m
+INFO 2026-07-19 14:19:15,212 django.channels.server [36mHTTP GET /static/chatapp/css/style.css 304 [0.03, 127.0.0.1:55550][0m
+INFO 2026-07-19 14:19:15,214 django.channels.server [36mHTTP GET /static/chatapp/css/auth.css 304 [0.00, 127.0.0.1:53602][0m
+INFO 2026-07-19 14:21:59,816 django.channels.server [mHTTP GET /login/ 200 [0.00, 127.0.0.1:56874][0m
+INFO 2026-07-19 14:21:59,862 django.channels.server [36mHTTP GET /static/chatapp/css/auth.css 304 [0.00, 127.0.0.1:56874][0m
+INFO 2026-07-19 14:22:11,932 chatapp.auth_views User 'Rudraksh' logged in
+INFO 2026-07-19 14:22:11,997 django.channels.server [32mHTTP POST /login/ 302 [1.11, 127.0.0.1:56874][0m
+INFO 2026-07-19 14:22:12,220 django.channels.server [mHTTP GET / 200 [0.21, 127.0.0.1:56874][0m
+INFO 2026-07-19 14:22:12,243 django.channels.server [36mHTTP GET /static/chatapp/js/chat.js 304 [0.00, 127.0.0.1:56874][0m
+INFO 2026-07-20 10:57:31,070 django.utils.autoreload Watching for file changes with StatReloader
+INFO 2026-07-20 11:01:29,965 django.channels.server [32mHTTP GET / 302 [0.09, 127.0.0.1:51789][0m
+INFO 2026-07-20 11:01:30,064 django.channels.server [mHTTP GET /login/ 200 [0.06, 127.0.0.1:51789][0m
+INFO 2026-07-20 11:01:30,165 django.channels.server [36mHTTP GET /static/chatapp/css/style.css 304 [0.00, 127.0.0.1:51789][0m
+INFO 2026-07-20 11:01:30,167 django.channels.server [36mHTTP GET /static/chatapp/css/auth.css 304 [0.01, 127.0.0.1:57227][0m
+INFO 2026-07-20 11:01:30,300 django.channels.server [36mHTTP GET /static/chatapp/css/auth.css 304 [0.02, 127.0.0.1:57227][0m
+INFO 2026-07-20 11:06:37,875 django.channels.server [mHTTP GET /login/ 200 [0.01, 127.0.0.1:60116][0m
+INFO 2026-07-20 11:06:37,920 django.channels.server [36mHTTP GET /static/chatapp/css/auth.css 304 [0.00, 127.0.0.1:60116][0m
+INFO 2026-07-20 11:06:38,208 django.channels.server [mHTTP GET /login/ 200 [0.02, 127.0.0.1:60116][0m
+INFO 2026-07-20 11:06:38,269 django.channels.server [36mHTTP GET /static/chatapp/css/auth.css 304 [0.00, 127.0.0.1:60116][0m

@@ -28,12 +28,14 @@ ALLOWED_HOSTS = [
 ]
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'chatapp',
 ]
 
@@ -66,6 +68,10 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ksp_chat.wsgi.application'
+# Regular HTTP traffic still goes through WSGI/the app above unchanged;
+# ASGI is only what the live /logs/ websocket route (chatapp/routing.py)
+# needs, wired up in asgi.py.
+ASGI_APPLICATION = 'ksp_chat.asgi.application'
 
 DATABASES = {
     'default': {
@@ -110,3 +116,51 @@ AUTH_JWT_ALGORITHM = os.environ.get('AUTH_JWT_ALGORITHM', 'HS256')
 AUTH_SERVICE_BASE_URL = os.environ.get('AUTH_SERVICE_BASE_URL', 'http://127.0.0.1:8001')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Channels layer backing the live /logs/ page. In-memory is fine for a
+# single dev process; a production deployment running multiple worker
+# processes needs channels_redis instead, since InMemoryChannelLayer
+# doesn't share group membership across processes.
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    }
+}
+
+# Usernames allowed to open the live logs page/socket (see chatapp/consumers.py).
+# Empty (default) means any authenticated user can view — set
+# LOG_VIEWER_USERS="alice,bob" in .env to restrict it.
+LOG_VIEWER_USERS = [
+    u.strip() for u in os.environ.get('LOG_VIEWER_USERS', '').split(',') if u.strip()
+]
+
+(BASE_DIR / "logs").mkdir(exist_ok=True)
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {"format": "{levelname} {asctime} {name} {message}", "style": "{"},
+    },
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "formatter": "verbose"},
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": BASE_DIR / "logs" / "app.log",
+            "maxBytes": 10 * 1024 * 1024,
+            "backupCount": 10,
+            "formatter": "verbose",
+        },
+        # Feeds the live /logs/ page — see chatapp/logging_handlers.py for
+        # why this can never block/slow down the request that logged.
+        "live": {
+            "class": "chatapp.logging_handlers.ChannelsLogHandler",
+            "formatter": "verbose",
+        },
+    },
+    "root": {"handlers": ["console"], "level": "WARNING"},
+    "loggers": {
+        "django": {"handlers": ["console", "file", "live"], "level": "INFO", "propagate": False},
+        "chatapp": {"handlers": ["console", "file", "live"], "level": "DEBUG", "propagate": False},
+    },
+}

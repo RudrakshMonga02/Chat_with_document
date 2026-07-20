@@ -30,7 +30,10 @@ Bug fixes in this version:
 
 import json
 import logging
+import re
+from datetime import datetime
 
+from django.conf import settings
 from django.db import IntegrityError
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -41,6 +44,48 @@ from .models import AppUser, ChatMessage, ChatSession, Document
 from .services import RAGService, RAGServiceError
 
 logger = logging.getLogger(__name__)
+
+# Matches the "verbose" formatter in settings.LOGGING: "{levelname} {asctime} {name} {message}".
+RECENT_LOGS_MAX_LINES = 2000
+_LOG_LINE_RE = re.compile(
+    r"^(?P<level>\w+) (?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) (?P<logger>\S+) (?P<message>.*)$"
+)
+# Daphne colorizes its own access-log messages (e.g. "django.channels.server")
+# with raw ANSI escape codes before they ever reach logging's formatter, so
+# they end up written straight into the file. Strip them back out when
+# reading history — otherwise they show as garbage in the browser.
+_ANSI_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+
+
+def _read_recent_logs(max_lines=RECENT_LOGS_MAX_LINES):
+    """The last max_lines of the rotating log file, parsed into the same
+    {level, logger, message, time} shape the live websocket sends, so the
+    frontend can render history and live lines identically. Lines that
+    don't match the formatter (e.g. traceback continuation lines from
+    exc_info=True) are folded into the previous entry's message rather than
+    shown as their own malformed line."""
+    log_path = settings.BASE_DIR / "logs" / "app.log"
+    if not log_path.exists():
+        return []
+
+    with open(log_path, "r", encoding="utf-8", errors="replace") as f:
+        lines = f.readlines()[-max_lines:]
+
+    entries = []
+    for raw in lines:
+        raw = _ANSI_RE.sub("", raw.rstrip("\n"))
+        match = _LOG_LINE_RE.match(raw)
+        if match:
+            ts = datetime.strptime(match.group("timestamp"), "%Y-%m-%d %H:%M:%S,%f")
+            entries.append({
+                "level": match.group("level"),
+                "logger": match.group("logger"),
+                "message": match.group("message"),
+                "time": ts.timestamp(),
+            })
+        elif entries:
+            entries[-1]["message"] += "\n" + raw
+    return entries
 
 # Cookie that remembers which session_keys this browser has created, so the
 # sidebar/load/delete/remove-document endpoints can be scoped to "mine"
@@ -145,6 +190,14 @@ def _doc_list(chat_session: ChatSession) -> list[dict]:
 # ── Views ─────────────────────────────────────────────────────────────────────
 
 @login_required
+def logs_page(request):
+    return render(request, "chatapp/logs.html", {
+        "auth_username": get_request_username(request),
+        "initial_logs": _read_recent_logs(),
+    })
+
+
+@login_required
 def index(request):
     _ensure_session(request)
     session_key = _resolve_active_session_key(request)
@@ -212,6 +265,8 @@ def upload_file(request):
             chat_session.title = f"{chat_session.documents.first().filename} +{existing_count - 1} more"
     chat_session.save()
 
+    logger.info("Document '%s' uploaded to session %s (%d chunks)", result["filename"], session_key, result["chunk_count"])
+
     visible_keys = list(set(_visible_session_keys(request)) | {session_key})
     response = JsonResponse({
         "filename": result["filename"],
@@ -239,7 +294,9 @@ def remove_document(request, document_id):
         # Don't reveal that a document with this id exists elsewhere.
         return JsonResponse({"error": "Document not found."}, status=404)
 
+    filename = doc.filename
     doc.delete()  # its Chroma chunks are cleaned up by the post_delete signal in signals.py
+    logger.info("Document '%s' removed from session %s", filename, chat_session.session_key)
 
     if not chat_session.title_locked:
         remaining = list(chat_session.documents.all())
@@ -282,6 +339,8 @@ def chat_api(request):
     if not question:
         return JsonResponse({"error": "Question cannot be empty."}, status=400)
 
+    logger.info("Question asked in session %s: %s", session_key, question[:200])
+
     # Last 10 messages = 5 turns of current session context
     recent = list(chat_session.messages.order_by("-created_at")[:10])
     recent.reverse()
@@ -300,6 +359,8 @@ def chat_api(request):
         answer = service.query(question, current_history, source_filenames, cross_session_keys)
     except RAGServiceError as e:
         return JsonResponse({"error": str(e)}, status=502)
+
+    logger.info("Answer generated for session %s (%d chars)", session_key, len(answer))
 
     # Save both turns to DB
     user_msg = ChatMessage.objects.create(session=chat_session, role="user", content=question)
@@ -336,6 +397,8 @@ def new_session(request):
 
     request.session.flush()
     request.session.create()
+
+    logger.info("New chat session created: %s", request.session.session_key)
 
     return JsonResponse({
         "sessions": _session_list(_visible_session_keys(request)),
@@ -397,6 +460,7 @@ def delete_session(request, session_key):
     # so it runs consistently regardless of where the delete is triggered from
     # (this view, the admin, a shell command, etc).
     chat_session.delete()
+    logger.info("Chat session deleted: %s", session_key)
 
     if was_active:
         request.session.flush()
@@ -438,6 +502,8 @@ def rename_session(request, session_key):
     chat_session.title = new_title[:255]
     chat_session.title_locked = True
     chat_session.save()
+
+    logger.info("Session %s renamed to '%s'", session_key, chat_session.title)
 
     visible_keys = list(set(_visible_session_keys(request)) | {session_key})
     return JsonResponse({
