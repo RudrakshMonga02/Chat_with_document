@@ -140,22 +140,37 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "verbose": {"format": "{levelname} {asctime} {name} {message}", "style": "{"},
+        # [username] is bracketed specifically so _LOG_LINE_RE (views.py) can
+        # tell new-format lines apart from anything already in app.log from
+        # before this field existed, rather than mis-parsing old lines.
+        "verbose": {"format": "{levelname} {asctime} [{username}] {name} {message}", "style": "{"},
+    },
+    "filters": {
+        "username": {"()": "chatapp.logging_handlers.UsernameLogFilter"},
     },
     "handlers": {
-        "console": {"class": "logging.StreamHandler", "formatter": "verbose"},
+        # The filter has to live on each handler, not the "django"/"chatapp"
+        # logger entries below — nearly every logger.getLogger(__name__) call
+        # in this app (e.g. "chatapp.views") is a *child* of "chatapp", and
+        # Logger.callHandlers() walks straight to an ancestor's handlers on
+        # propagation without re-running the ancestor logger's own filters.
+        # A filter on the logger only ever applies to records logged
+        # directly against that exact logger name.
+        "console": {"class": "logging.StreamHandler", "formatter": "verbose", "filters": ["username"]},
         "file": {
             "class": "logging.handlers.RotatingFileHandler",
             "filename": BASE_DIR / "logs" / "app.log",
             "maxBytes": 10 * 1024 * 1024,
             "backupCount": 10,
             "formatter": "verbose",
+            "filters": ["username"],
         },
         # Feeds the live /logs/ page — see chatapp/logging_handlers.py for
         # why this can never block/slow down the request that logged.
         "live": {
             "class": "chatapp.logging_handlers.ChannelsLogHandler",
             "formatter": "verbose",
+            "filters": ["username"],
         },
     },
     "root": {"handlers": ["console"], "level": "WARNING"},

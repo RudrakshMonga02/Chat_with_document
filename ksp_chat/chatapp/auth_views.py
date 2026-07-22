@@ -18,8 +18,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
 from .authentication import AUTH_COOKIE_NAME, get_request_username
-from .models import AppUser, ChatSession
-from .views import OWNED_SESSIONS_COOKIE
+from .models import AppUser
 
 logger = logging.getLogger(__name__)
 
@@ -57,14 +56,20 @@ def login_view(request):
     if not token:
         return render(request, "chatapp/login.html", {"error": "Unexpected response from the auth service."})
 
-    app_user, _ = AppUser.objects.get_or_create(username=username)
+    # Ensures the AppUser shadow row exists as soon as someone logs in, not
+    # just the first time they upload something (_get_or_create_chat_session
+    # in views.py would also lazily create it, but there's no reason to wait).
+    AppUser.objects.get_or_create(username=username)
     logger.info("User '%s' logged in", username)
 
-    # Anonymous chats created in this browser before logging in follow the
-    # account from here on, so nothing is "lost" by signing in.
-    owned_keys = [k for k in request.COOKIES.get(OWNED_SESSIONS_COOKIE, "").split(",") if k]
-    if owned_keys:
-        ChatSession.objects.filter(session_key__in=owned_keys, owner__isnull=True).update(owner=app_user)
+    # Rotate the Django session on every login — without this, whatever
+    # session_key this browser already had (e.g. left over from a previous
+    # account on a shared browser) stays active, and _resolve_active_session_key
+    # would resolve straight to that previous account's ChatSession. Matches
+    # what django.contrib.auth's own login() does for the same reason, via
+    # Django's session framework directly (no dependency on django.contrib.auth).
+    request.session.flush()
+    request.session.create()
 
     response = HttpResponseRedirect(reverse("index"))
     response.set_cookie(
@@ -153,6 +158,12 @@ def logout_view(request):
             logger.warning("Failed to revoke token with the auth service on logout", exc_info=True)
 
     logger.info("User '%s' logged out", get_request_username(request))
+
+    # Rotate the session here too, not just on login — an idle logged-out
+    # browser shouldn't keep sitting on a session_key tied to whoever was
+    # just using it, waiting for the next login to clean it up.
+    request.session.flush()
+    request.session.create()
 
     response = HttpResponseRedirect(reverse("login"))
     response.delete_cookie(AUTH_COOKIE_NAME)

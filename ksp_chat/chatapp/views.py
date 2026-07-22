@@ -11,21 +11,33 @@ Bug fixes in this version:
      needs it — previously upload_file used the raw Django session key even
      while browsing a loaded past session, silently attaching new documents
      to the wrong ChatSession
-  6. sessions are now scoped per-browser via a lightweight cookie (see
-     _get_owned_session_keys/_remember_owned_session) — previously the
-     sidebar and load/delete/remove-document endpoints exposed and accepted
-     every ChatSession in the database, not just the requester's own
-  7. cross-session RAG (chat_api) is now scoped to that same owned-sessions
-     list instead of the entire cross-user history
+  6. sessions were scoped per-browser via a lightweight cookie — since
+     removed (see fix 10) once login became the sole source of truth for
+     ownership
+  7. cross-session RAG (chat_api) is scoped to sessions this request can
+     see (_visible_session_keys) instead of the entire cross-user history
   8. rename_session lets a chat be renamed any number of times; once
      renamed, upload/remove-document stop overwriting the title
      (ChatSession.title_locked)
   9. login is now mandatory: index uses login_required (redirects to
      /login/), every AJAX endpoint uses jwt_required (401 JSON, since
-     chat.js is what's calling them, not a page navigation). The anonymous
-     owned-sessions-cookie scoping in _visible_session_keys is harmless
-     dead weight now that every request reaching these views is
-     authenticated, but it's left in place rather than ripped out
+     chat.js is what's calling them, not a page navigation)
+  10. fixed a real cross-account data leak: login/logout didn't rotate
+      Django's session cookie, so a stale session_key from a previous
+      account on a shared browser could resolve straight to their
+      ChatSession — auth_views now flushes the session on login/logout
+      (matching what django.contrib.auth's own login() does, via Django's
+      session framework directly — no dependency on django.contrib.auth
+      itself). _resolve_active_chat_session/_get_or_create_chat_session add
+      a defense-in-depth ownership check so a mismatched session_key can
+      never surface someone else's data even if rotation is ever bypassed
+      by a future bug. Root-caused via the same class of bug a second time
+      while testing this: _owns_session/_visible_session_keys also used to
+      trust the owned-sessions cookie from fix 6, which — same as the
+      Django session cookie — was never cleared on login/logout, so a
+      stale value there granted the SAME cross-account access this fix was
+      supposed to close. That cookie is gone now; account ownership
+      (ChatSession.owner) is the only thing either function trusts
 """
 
 import json
@@ -45,10 +57,14 @@ from .services import RAGService, RAGServiceError
 
 logger = logging.getLogger(__name__)
 
-# Matches the "verbose" formatter in settings.LOGGING: "{levelname} {asctime} {name} {message}".
+# Matches the "verbose" formatter in settings.LOGGING:
+# "{levelname} {asctime} [{username}] {name} {message}". The bracketed
+# username is required by this pattern, so lines written before that field
+# existed simply won't match — see the fallback branch below.
 RECENT_LOGS_MAX_LINES = 2000
 _LOG_LINE_RE = re.compile(
-    r"^(?P<level>\w+) (?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) (?P<logger>\S+) (?P<message>.*)$"
+    r"^(?P<level>\w+) (?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) "
+    r"\[(?P<username>[^\]]*)\] (?P<logger>\S+) (?P<message>.*)$"
 )
 # Daphne colorizes its own access-log messages (e.g. "django.channels.server")
 # with raw ANSI escape codes before they ever reach logging's formatter, so
@@ -57,13 +73,15 @@ _LOG_LINE_RE = re.compile(
 _ANSI_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 
 
-def _read_recent_logs(max_lines=RECENT_LOGS_MAX_LINES):
-    """The last max_lines of the rotating log file, parsed into the same
-    {level, logger, message, time} shape the live websocket sends, so the
-    frontend can render history and live lines identically. Lines that
-    don't match the formatter (e.g. traceback continuation lines from
-    exc_info=True) are folded into the previous entry's message rather than
-    shown as their own malformed line."""
+def _read_recent_logs(username: str, max_lines=RECENT_LOGS_MAX_LINES):
+    """The last max_lines of the rotating log file belonging to username,
+    parsed into the same {level, logger, message, time} shape the live
+    websocket sends, so the frontend can render history and live lines
+    identically. Lines that don't match the formatter (e.g. traceback
+    continuation lines from exc_info=True) are folded into the previous
+    matching entry's message rather than shown as their own malformed line
+    — so a traceback that followed someone else's log line never gets
+    attached to this user's history instead."""
     log_path = settings.BASE_DIR / "logs" / "app.log"
     if not log_path.exists():
         return []
@@ -72,29 +90,23 @@ def _read_recent_logs(max_lines=RECENT_LOGS_MAX_LINES):
         lines = f.readlines()[-max_lines:]
 
     entries = []
+    last_matched_mine = False
     for raw in lines:
         raw = _ANSI_RE.sub("", raw.rstrip("\n"))
         match = _LOG_LINE_RE.match(raw)
         if match:
-            ts = datetime.strptime(match.group("timestamp"), "%Y-%m-%d %H:%M:%S,%f")
-            entries.append({
-                "level": match.group("level"),
-                "logger": match.group("logger"),
-                "message": match.group("message"),
-                "time": ts.timestamp(),
-            })
-        elif entries:
+            last_matched_mine = match.group("username") == username
+            if last_matched_mine:
+                ts = datetime.strptime(match.group("timestamp"), "%Y-%m-%d %H:%M:%S,%f")
+                entries.append({
+                    "level": match.group("level"),
+                    "logger": match.group("logger"),
+                    "message": match.group("message"),
+                    "time": ts.timestamp(),
+                })
+        elif entries and last_matched_mine:
             entries[-1]["message"] += "\n" + raw
     return entries
-
-# Cookie that remembers which session_keys this browser has created, so the
-# sidebar/load/delete/remove-document endpoints can be scoped to "mine"
-# without requiring accounts. Separate from Django's session cookie, which
-# rotates on "New chat" and session deletion.
-OWNED_SESSIONS_COOKIE = "owned_sessions"
-OWNED_SESSIONS_MAX_AGE = 60 * 60 * 24 * 400  # ~400 days: the browser-enforced cap on cookie lifetime
-MAX_OWNED_SESSIONS = 50  # keeps the cookie comfortably under the ~4KB per-cookie limit
-
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -112,10 +124,23 @@ def _resolve_active_session_key(request) -> str:
 
 
 def _get_or_create_chat_session(request, session_key: str) -> ChatSession:
-    obj, _ = ChatSession.objects.get_or_create(session_key=session_key)
-    # Claim it for the logged-in account the first time we see it unowned —
-    # covers both a brand new session and an old anonymous one that predates login.
     username = get_request_username(request)
+    obj, created = ChatSession.objects.get_or_create(session_key=session_key)
+
+    if not created and obj.owner_id is not None and (not username or obj.owner.username != username):
+        # session_key resolves to somebody else's chat — a stale/reused
+        # browser cookie, most likely. Login/logout now rotate the session
+        # specifically to prevent this, but never trust that alone: reusing
+        # or silently re-owning another account's ChatSession here would
+        # mean this upload lands in their data. Mint a fresh session instead.
+        logger.warning(
+            "Refusing to reuse ChatSession %s (owned by '%s') for authenticated user '%s' — rotating to a new session",
+            session_key, obj.owner.username, username,
+        )
+        request.session.flush()
+        request.session.create()
+        obj = ChatSession.objects.create(session_key=request.session.session_key)
+
     if username and obj.owner_id is None:
         app_user, _ = AppUser.objects.get_or_create(username=username)
         obj.owner = app_user
@@ -123,38 +148,29 @@ def _get_or_create_chat_session(request, session_key: str) -> ChatSession:
     return obj
 
 
-def _get_owned_session_keys(request) -> list[str]:
-    raw = request.COOKIES.get(OWNED_SESSIONS_COOKIE, "")
-    return [k for k in raw.split(",") if k]
+def _resolve_active_chat_session(request, session_key: str) -> ChatSession | None:
+    """The ChatSession tied to session_key, but only if it isn't owned by
+    someone else. Defense-in-depth, independent of the login/logout session
+    rotation: even if a stale or reused session_key somehow survives to
+    reach here, this guarantees it can never surface another account's
+    chat history or documents — it's treated as if there's no active
+    session at all rather than silently shown."""
+    chat_session = ChatSession.objects.filter(session_key=session_key).first()
+    if chat_session is None:
+        return None
+    username = get_request_username(request)
+    if chat_session.owner_id is not None and (not username or chat_session.owner.username != username):
+        return None
+    return chat_session
 
 
-def _write_owned_cookie(response, keys: list[str]):
-    trimmed = keys[-MAX_OWNED_SESSIONS:]
-    response.set_cookie(
-        OWNED_SESSIONS_COOKIE,
-        ",".join(trimmed),
-        max_age=OWNED_SESSIONS_MAX_AGE,
-        httponly=True,
-        samesite="Lax",
-    )
-
-
-def _remember_owned_session(response, request, session_key: str):
-    keys = _get_owned_session_keys(request)
-    if session_key in keys:
-        return
-    _write_owned_cookie(response, keys + [session_key])
-
-
-def _owns_session(request, session_key: str, owned_keys) -> bool:
-    """Whether this request is allowed to view/act on session_key: it's in
-    the owned-sessions cookie, it's the browser's own live/loaded Django
-    session (covers the moment right before the cookie is written), or —
-    logged in — it belongs to the same account regardless of which browser
-    created it."""
+def _owns_session(request, session_key: str) -> bool:
+    """Whether this request is allowed to view/act on session_key: it's the
+    browser's own live/loaded Django session (covers the moment right
+    before a ChatSession row exists yet), or — the authoritative check,
+    since login is mandatory — it belongs to the same account."""
     if (
-        session_key in owned_keys
-        or session_key == request.session.session_key
+        session_key == request.session.session_key
         or session_key == request.session.get("_active_session_key_override")
     ):
         return True
@@ -165,15 +181,13 @@ def _owns_session(request, session_key: str, owned_keys) -> bool:
 
 
 def _visible_session_keys(request) -> list[str]:
-    """Every session_key this request should see in the sidebar: the
-    browser's own cookie-scoped anonymous sessions, plus — if logged in —
-    every session tied to that account, regardless of which browser or
+    """Every session_key this request should see in the sidebar: every
+    session owned by the logged-in account, regardless of which browser or
     device created it."""
-    keys = set(_get_owned_session_keys(request))
     username = get_request_username(request)
-    if username:
-        keys.update(ChatSession.objects.filter(owner__username=username).values_list("session_key", flat=True))
-    return list(keys)
+    if not username:
+        return []
+    return list(ChatSession.objects.filter(owner__username=username).values_list("session_key", flat=True))
 
 
 def _session_list(session_keys):
@@ -191,9 +205,10 @@ def _doc_list(chat_session: ChatSession) -> list[dict]:
 
 @login_required
 def logs_page(request):
+    username = get_request_username(request)
     return render(request, "chatapp/logs.html", {
-        "auth_username": get_request_username(request),
-        "initial_logs": _read_recent_logs(),
+        "auth_username": username,
+        "initial_logs": _read_recent_logs(username),
     })
 
 
@@ -202,7 +217,7 @@ def index(request):
     _ensure_session(request)
     session_key = _resolve_active_session_key(request)
 
-    chat_session = ChatSession.objects.filter(session_key=session_key).first()
+    chat_session = _resolve_active_chat_session(request, session_key)
     chat_history = (
         list(chat_session.messages.values("role", "content")) if chat_session else []
     )
@@ -228,6 +243,10 @@ def upload_file(request):
         return JsonResponse({"error": "No file was uploaded."}, status=400)
 
     chat_session = _get_or_create_chat_session(request, session_key)
+    # May differ from the value above — _get_or_create_chat_session rotates
+    # to a fresh session_key if the original one belonged to someone else.
+    # Everything below (RAGService, cookie, response) must use the real one.
+    session_key = chat_session.session_key
 
     if chat_session.documents.filter(filename=uploaded.name).exists():
         return JsonResponse(
@@ -268,29 +287,25 @@ def upload_file(request):
     logger.info("Document '%s' uploaded to session %s (%d chunks)", result["filename"], session_key, result["chunk_count"])
 
     visible_keys = list(set(_visible_session_keys(request)) | {session_key})
-    response = JsonResponse({
+    return JsonResponse({
         "filename": result["filename"],
         "chunk_count": result["chunk_count"],
         "message": f"'{result['filename']}' added ({result['chunk_count']} chunks).",
         "documents": _doc_list(chat_session),
         "sessions": _session_list(visible_keys),
     })
-    _remember_owned_session(response, request, session_key)
-    return response
 
 
 @require_http_methods(["DELETE"])
 @jwt_required
 def remove_document(request, document_id):
-    owned_keys = _get_owned_session_keys(request)
-
     try:
         doc = Document.objects.select_related("session").get(id=document_id)
     except Document.DoesNotExist:
         return JsonResponse({"error": "Document not found."}, status=404)
 
     chat_session = doc.session
-    if not _owns_session(request, chat_session.session_key, owned_keys):
+    if not _owns_session(request, chat_session.session_key):
         # Don't reveal that a document with this id exists elsewhere.
         return JsonResponse({"error": "Document not found."}, status=404)
 
@@ -323,7 +338,7 @@ def chat_api(request):
 
     # BUG FIX 1: check DB for documents, not the ephemeral session variable.
     # This works correctly after server restarts and after switching sessions.
-    chat_session = ChatSession.objects.filter(session_key=session_key).first()
+    chat_session = _resolve_active_chat_session(request, session_key)
     if not chat_session or not chat_session.documents.exists():
         return JsonResponse(
             {"error": "Please upload at least one document before asking questions."},
@@ -409,8 +424,7 @@ def new_session(request):
 @require_http_methods(["GET"])
 @jwt_required
 def load_session(request, session_key):
-    owned_keys = _get_owned_session_keys(request)
-    if not _owns_session(request, session_key, owned_keys):
+    if not _owns_session(request, session_key):
         return JsonResponse({"error": "Session not found."}, status=404)
 
     try:
@@ -436,8 +450,7 @@ def load_session(request, session_key):
 @require_http_methods(["DELETE"])
 @jwt_required
 def delete_session(request, session_key):
-    owned_keys = _get_owned_session_keys(request)
-    if not _owns_session(request, session_key, owned_keys):
+    if not _owns_session(request, session_key):
         return JsonResponse({"error": "Session not found."}, status=404)
 
     try:
@@ -466,21 +479,17 @@ def delete_session(request, session_key):
         request.session.flush()
         request.session.create()
 
-    remaining_owned = [k for k in owned_keys if k != session_key]
     remaining_visible = [k for k in _visible_session_keys(request) if k != session_key]
-    response = JsonResponse({
+    return JsonResponse({
         "sessions": _session_list(remaining_visible),
         "new_session_key": request.session.session_key if was_active else None,
     })
-    _write_owned_cookie(response, remaining_owned)
-    return response
 
 
 @require_http_methods(["POST"])
 @jwt_required
 def rename_session(request, session_key):
-    owned_keys = _get_owned_session_keys(request)
-    if not _owns_session(request, session_key, owned_keys):
+    if not _owns_session(request, session_key):
         return JsonResponse({"error": "Session not found."}, status=404)
 
     try:
