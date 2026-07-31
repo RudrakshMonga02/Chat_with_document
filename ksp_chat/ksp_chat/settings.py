@@ -40,6 +40,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # First/outermost so the request id + timing it sets up covers the
+    # entire request, including the auth/session/CSRF middleware below it —
+    # see chatapp.middleware.RequestContextLoggingMiddleware's own docstring.
+    'chatapp.middleware.RequestContextLoggingMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -114,6 +118,31 @@ GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
 AUTH_JWT_SECRET_KEY = os.environ.get('AUTH_JWT_SECRET_KEY', '')
 AUTH_JWT_ALGORITHM = os.environ.get('AUTH_JWT_ALGORITHM', 'HS256')
 AUTH_SERVICE_BASE_URL = os.environ.get('AUTH_SERVICE_BASE_URL', 'http://127.0.0.1:8001')
+# Optional hardening, both unset (skipped) by default: the external auth
+# service doesn't send `iss`/`aud` claims today (only `sub`), so turning
+# these on before it does would lock everyone out. Once it's confirmed to
+# set them, set the matching value here and chatapp.authentication.verify_jwt
+# will start rejecting any token not meant for this app specifically.
+AUTH_JWT_EXPECTED_ISS = os.environ.get('AUTH_JWT_EXPECTED_ISS', '')
+AUTH_JWT_EXPECTED_AUD = os.environ.get('AUTH_JWT_EXPECTED_AUD', '')
+
+# A single hardcoded admin identity (see chatapp/admin_auth.py) — deliberately
+# NOT part of the AUTH_JWT_* system above: never issued by the auth service,
+# never tied to an AppUser row, never created through registration. Left
+# unset, both default to '' and check_admin_credentials() always returns
+# False, so the admin area is simply unreachable rather than exposed with an
+# empty username/password.
+ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', '')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', '')
+
+# Django's own built-in admin site (/admin/, django.contrib.admin) is a
+# THIRD identity system alongside the two above — django.contrib.auth's own
+# User/is_staff/is_superuser, which nothing else in this app ever reads
+# (no code here touches request.user). Off by default so it can never
+# become reachable just because a superuser happens to exist in the DB —
+# see ksp_chat/urls.py, which only registers the /admin/ URL when this is
+# True, and chatapp/checks.py, which warns if it's on outside DEBUG.
+DJANGO_ADMIN_ENABLED = os.environ.get('DJANGO_ADMIN_ENABLED', 'False') == 'True'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -136,17 +165,27 @@ LOG_VIEWER_USERS = [
 
 (BASE_DIR / "logs").mkdir(exist_ok=True)
 
+# Env-driven rather than hardcoded, so a deployment can turn chatapp's
+# logger up/down without editing this file. Defaults mirror DEBUG: verbose
+# locally, quieter (but still fully event-tagged) everywhere else.
+LOG_LEVEL = os.environ.get('LOG_LEVEL', 'DEBUG' if DEBUG else 'INFO')
+# Only controls the "console" handler below — a human-readable line for
+# whoever is tailing a terminal in dev, or "json" for a deployment whose log
+# aggregator scrapes stdout. The "file" handler (app.log) always uses JSON
+# regardless of this setting: it's the one views._read_recent_logs parses
+# back out directly to seed the live /logs/ page's history, and a stable
+# structured format is what makes that safe without regex-matching text.
+LOG_FORMAT = os.environ.get('LOG_FORMAT', 'text' if DEBUG else 'json')
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        # [username] is bracketed specifically so _LOG_LINE_RE (views.py) can
-        # tell new-format lines apart from anything already in app.log from
-        # before this field existed, rather than mis-parsing old lines.
         "verbose": {"format": "{levelname} {asctime} [{username}] {name} {message}", "style": "{"},
+        "json": {"()": "chatapp.logging_handlers.JSONFormatter"},
     },
     "filters": {
-        "username": {"()": "chatapp.logging_handlers.UsernameLogFilter"},
+        "request_context": {"()": "chatapp.logging_handlers.RequestContextFilter"},
     },
     "handlers": {
         # The filter has to live on each handler, not the "django"/"chatapp"
@@ -156,26 +195,32 @@ LOGGING = {
         # propagation without re-running the ancestor logger's own filters.
         # A filter on the logger only ever applies to records logged
         # directly against that exact logger name.
-        "console": {"class": "logging.StreamHandler", "formatter": "verbose", "filters": ["username"]},
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "json" if LOG_FORMAT == "json" else "verbose",
+            "filters": ["request_context"],
+        },
         "file": {
             "class": "logging.handlers.RotatingFileHandler",
             "filename": BASE_DIR / "logs" / "app.log",
             "maxBytes": 10 * 1024 * 1024,
             "backupCount": 10,
-            "formatter": "verbose",
-            "filters": ["username"],
+            "formatter": "json",
+            "filters": ["request_context"],
         },
         # Feeds the live /logs/ page — see chatapp/logging_handlers.py for
-        # why this can never block/slow down the request that logged.
+        # why this can never block/slow down the request that logged. Its
+        # own emit() builds the payload from the record's structured fields
+        # directly, so the "formatter" here is unused but harmless.
         "live": {
             "class": "chatapp.logging_handlers.ChannelsLogHandler",
-            "formatter": "verbose",
-            "filters": ["username"],
+            "formatter": "json",
+            "filters": ["request_context"],
         },
     },
     "root": {"handlers": ["console"], "level": "WARNING"},
     "loggers": {
         "django": {"handlers": ["console", "file", "live"], "level": "INFO", "propagate": False},
-        "chatapp": {"handlers": ["console", "file", "live"], "level": "DEBUG", "propagate": False},
+        "chatapp": {"handlers": ["console", "file", "live"], "level": LOG_LEVEL, "propagate": False},
     },
 }

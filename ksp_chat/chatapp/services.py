@@ -11,6 +11,10 @@ Major upgrades in this version:
                            include them as additional context.
   3. Bug fixes           — ingest() is additive, load_session correctly
                            updates the Django session key in views.py.
+  4. Observability       — every pipeline step (extract, chunk, embed,
+                           retrieve, generate) is timed and event-tagged via
+                           log_context.log_timing, instead of only the
+                           failure paths being visible.
 """
 
 import logging
@@ -18,6 +22,7 @@ import logging
 from .embeddings import BaseEmbeddingStrategy, GeminiEmbeddingStrategy
 from .extractors import get_extractor
 from .llm import BaseLLMStrategy, GeminiLLMStrategy
+from .log_context import log_timing
 from .repository import BaseVectorRepository, ChromaVectorRepository, HistoryVectorRepository
 
 logger = logging.getLogger(__name__)
@@ -142,21 +147,39 @@ class RAGService:
 
     def ingest(self, django_file) -> dict:
         """Extract, chunk, embed, and ADD a file's chunks. Additive — no reset."""
-        extractor = get_extractor(django_file.name)
-        text = extractor.extract(django_file)
+        # NOTE: "filename" is a reserved LogRecord attribute name (the source
+        # file the log call itself was made from) — logging.Logger raises
+        # KeyError if extra= (which is what log_timing's **fields become)
+        # tries to overwrite it, so this is doc_filename everywhere here.
+        with log_timing(logger, "extraction", doc_filename=django_file.name) as result:
+            extractor = get_extractor(django_file.name)
+            text = extractor.extract(django_file)
+            result["chars_extracted"] = len(text)
 
         if not text.strip():
             raise ValueError("Couldn't extract any text from that file.")
 
-        chunks = _chunk_text(text)
+        with log_timing(logger, "chunking", doc_filename=django_file.name) as result:
+            chunks = _chunk_text(text)
+            result["chunk_count"] = len(chunks)
+
         try:
-            embeddings = self._embedder.embed_documents(chunks)
+            with log_timing(logger, "embedding", doc_filename=django_file.name, chunk_count=len(chunks)):
+                embeddings = self._embedder.embed_documents(chunks)
         except Exception:
-            logger.exception("Embedding failed while ingesting '%s'", django_file.name)
+            # log_timing already logged the full traceback as
+            # "embedding_failed" — this is the business-level outcome on
+            # top of that, not a duplicate of it.
+            logger.warning(
+                "Document upload failed for '%s' during embedding", django_file.name,
+                extra={"event": "document_upload_failed", "doc_filename": django_file.name, "stage": "embedding"},
+            )
             raise RAGServiceError(
                 "Couldn't process that document right now — the embedding service is unavailable. Please try again shortly."
             ) from None
-        self._repo.add(chunks, embeddings, source=django_file.name)
+
+        with log_timing(logger, "vector_store_write", doc_filename=django_file.name, chunk_count=len(chunks)):
+            self._repo.add(chunks, embeddings, source=django_file.name)
 
         return {"filename": django_file.name, "chunk_count": len(chunks)}
 
@@ -185,7 +208,10 @@ class RAGService:
                 role=role,
             )
         except Exception:
-            logger.exception("Failed to embed message %s into cross-session history", message_id)
+            logger.exception(
+                "Failed to embed message %s into cross-session history", message_id,
+                extra={"event": "embedding_failed", "stage": "history_store", "message_id": message_id},
+            )
 
     # ── Query ─────────────────────────────────────────────────────────────────
 
@@ -207,24 +233,28 @@ class RAGService:
           5. Call Gemini with structured multi-turn history
         """
         try:
-            question_embedding = self._embedder.embed_query(question)
+            with log_timing(logger, "query_embedding"):
+                question_embedding = self._embedder.embed_query(question)
         except Exception:
-            logger.exception("Embedding failed for question")
             raise RAGServiceError(
                 "Couldn't process your question right now — please try again shortly."
             ) from None
 
         # Step 2 — document retrieval
-        relevant_chunks = self._repo.query(question_embedding, top_k=5)
+        with log_timing(logger, "retrieval", top_k=5) as result:
+            relevant_chunks = self._repo.query(question_embedding, top_k=5)
+            result["results_count"] = len(relevant_chunks)
 
         # Step 3 — cross-session history retrieval, scoped to the caller's
         # own other sessions (current session is excluded from this list by
         # the caller since that history is already in current_session_history)
-        cross_session = self._history_repo.query_relevant(
-            embedding=question_embedding,
-            top_k=4,
-            session_keys=cross_session_keys,
-        )
+        with log_timing(logger, "cross_session_retrieval", top_k=4) as result:
+            cross_session = self._history_repo.query_relevant(
+                embedding=question_embedding,
+                top_k=4,
+                session_keys=cross_session_keys,
+            )
+            result["results_count"] = len(cross_session)
 
         # Step 4 — system prompt (document context + cross-session context)
         system_prompt = _build_system_prompt(
@@ -237,13 +267,19 @@ class RAGService:
         # current_session_history goes as proper alternating turns,
         # NOT as a text block in the prompt
         try:
-            return self._llm.generate(
-                system_prompt=system_prompt,
-                history=current_session_history,
-                question=question,
-            )
+            with log_timing(
+                logger, "llm_request",
+                model=getattr(self._llm, "MODEL", type(self._llm).__name__),
+            ) as result:
+                answer = self._llm.generate(
+                    system_prompt=system_prompt,
+                    history=current_session_history,
+                    question=question,
+                )
+                result["answer_length"] = len(answer)
         except Exception:
-            logger.exception("Gemini generation failed")
             raise RAGServiceError(
                 "Couldn't generate an answer right now — please try again shortly."
             ) from None
+
+        return answer

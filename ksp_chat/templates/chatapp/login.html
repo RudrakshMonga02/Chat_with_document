@@ -22,6 +22,20 @@
             {% endif %}
 
             <div class="auth-field">
+                <span class="auth-role-label">Signing in as</span>
+                <div class="auth-role-options">
+                    <label class="auth-role-option">
+                        <input type="radio" name="role" value="user" {% if role != "admin" %}checked{% endif %}>
+                        User
+                    </label>
+                    <label class="auth-role-option">
+                        <input type="radio" name="role" value="admin" {% if role == "admin" %}checked{% endif %}>
+                        Admin
+                    </label>
+                </div>
+            </div>
+
+            <div class="auth-field">
                 <label for="id_username">Username</label>
                 <input type="text" name="username" id="id_username"
                        autofocus autocomplete="username" required>

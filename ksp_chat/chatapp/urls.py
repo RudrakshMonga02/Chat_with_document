@@ -1,5 +1,5 @@
 from django.urls import path
-from . import auth_views, views
+from . import admin_views, auth_views, views
 
 urlpatterns = [
     path("", views.index, name="index"),
@@ -14,4 +14,8 @@ urlpatterns = [
     path("login/", auth_views.login_view, name="login"),
     path("register/", auth_views.register_view, name="register"),
     path("logout/", auth_views.logout_view, name="logout"),
+    # Admin area — separate identity system, separate views module.
+    path("users/", admin_views.admin_users_page, name="admin_users_page"),
+    path("users/<str:username>/", admin_views.remove_user, name="remove_user"),
+    path("admin-logout/", admin_views.admin_logout_view, name="admin_logout"),
 ]

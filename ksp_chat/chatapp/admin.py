@@ -16,7 +16,10 @@ class ChatMessageInline(admin.TabularInline):
 
 @admin.register(AppUser)
 class AppUserAdmin(admin.ModelAdmin):
-    list_display = ("username", "created_at")
+    # is_active is deliberately editable here — lets you unban someone by
+    # hand without going through the admin dashboard's remove-user action.
+    list_display = ("username", "is_active", "created_at")
+    list_filter = ("is_active",)
     search_fields = ("username",)
     readonly_fields = ("username", "created_at")
 

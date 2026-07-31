@@ -17,7 +17,9 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
+from .admin_auth import ADMIN_SESSION_KEY, check_admin_credentials, is_admin_request
 from .authentication import AUTH_COOKIE_NAME, get_request_username
+from .log_context import current_correlation_id
 from .models import AppUser
 
 logger = logging.getLogger(__name__)
@@ -25,31 +27,72 @@ logger = logging.getLogger(__name__)
 AUTH_REQUEST_TIMEOUT = 5  # seconds — a hung auth service shouldn't hang this app forever
 
 
+def _correlation_headers() -> dict:
+    """X-Correlation-ID to forward on every call to the external auth
+    service, so a request that flows through both this app and that
+    service can be traced as one story across both services' logs."""
+    correlation_id = current_correlation_id.get()
+    return {"X-Correlation-ID": correlation_id} if correlation_id else {}
+
+
 @require_http_methods(["GET", "POST"])
 def login_view(request):
     if get_request_username(request):
         return HttpResponseRedirect(reverse("index"))
+    if is_admin_request(request):
+        return HttpResponseRedirect(reverse("admin_users_page"))
 
     if request.method == "GET":
         return render(request, "chatapp/login.html", {})
 
+    role = request.POST.get("role") or "user"
     username = (request.POST.get("username") or "").strip()
     password = request.POST.get("password") or ""
 
     if not username or not password:
-        return render(request, "chatapp/login.html", {"error": "Username and password are required."})
+        return render(request, "chatapp/login.html", {
+            "error": "Username and password are required.",
+            "role": role,
+        })
 
+    if role == "admin":
+        # Checked locally first, with no network call — the auth service has
+        # no concept of "admin" at all, this never goes anywhere near it.
+        if not check_admin_credentials(username, password):
+            logger.warning(
+                "Failed admin login attempt for username '%s'", username,
+                extra={"event": "admin_login_failed"},
+            )
+            return render(request, "chatapp/login.html", {
+                "error": "This admin doesn't exist. Contact the owner for help.",
+                "role": "admin",
+            })
+
+        # Same session-rotation hygiene as a regular login below — a fresh
+        # session on every successful authentication, admin or not.
+        request.session.flush()
+        request.session.create()
+        request.session[ADMIN_SESSION_KEY] = True
+        logger.info("Admin login succeeded", extra={"event": "admin_login_success"})
+        return HttpResponseRedirect(reverse("admin_users_page"))
+
+    # role == "user" — existing flow, completely unchanged from before the
+    # role selector existed.
     try:
         resp = requests.post(
             f"{settings.AUTH_SERVICE_BASE_URL}/login",
             data={"username": username, "password": password},  # OAuth2PasswordRequestForm expects form encoding
+            headers=_correlation_headers(),
             timeout=AUTH_REQUEST_TIMEOUT,
         )
     except requests.RequestException:
         return render(request, "chatapp/login.html", {"error": "Auth service is unavailable — please try again shortly."})
 
     if resp.status_code != 200:
-        logger.warning("Failed login attempt for username '%s'", username)
+        logger.warning(
+            "Failed login attempt for username '%s'", username,
+            extra={"event": "login_failed"},
+        )
         return render(request, "chatapp/login.html", {"error": "Invalid username or password."})
 
     token = (resp.json() or {}).get("access_token")
@@ -60,7 +103,7 @@ def login_view(request):
     # just the first time they upload something (_get_or_create_chat_session
     # in views.py would also lazily create it, but there's no reason to wait).
     AppUser.objects.get_or_create(username=username)
-    logger.info("User '%s' logged in", username)
+    logger.info("User '%s' logged in", username, extra={"event": "login_success"})
 
     # Rotate the Django session on every login — without this, whatever
     # session_key this browser already had (e.g. left over from a previous
@@ -113,13 +156,14 @@ def register_view(request):
         resp = requests.post(
             f"{settings.AUTH_SERVICE_BASE_URL}/register",
             json={"username": username, "password": password1},
+            headers=_correlation_headers(),
             timeout=AUTH_REQUEST_TIMEOUT,
         )
     except requests.RequestException:
         return render(request, "chatapp/register.html", {"errors": ["Auth service is unavailable — please try again shortly."]})
 
     if resp.status_code == 201:
-        logger.info("New user registered: '%s'", username)
+        logger.info("New user registered: '%s'", username, extra={"event": "register_success"})
         return HttpResponseRedirect(reverse("login"))
 
     # Two different error shapes depending on failure: a 400 with a plain
@@ -137,6 +181,10 @@ def register_view(request):
     else:
         errors = ["Registration failed — please try again."]
 
+    logger.warning(
+        "Registration failed for '%s' (status %s)", username, resp.status_code,
+        extra={"event": "register_failed", "status_code": resp.status_code},
+    )
     return render(request, "chatapp/register.html", {"errors": errors})
 
 
@@ -151,13 +199,19 @@ def logout_view(request):
         try:
             requests.post(
                 f"{settings.AUTH_SERVICE_BASE_URL}/logout",
-                headers={"Authorization": f"Bearer {token}"},
+                headers={"Authorization": f"Bearer {token}", **_correlation_headers()},
                 timeout=AUTH_REQUEST_TIMEOUT,
             )
         except requests.RequestException:
-            logger.warning("Failed to revoke token with the auth service on logout", exc_info=True)
+            logger.warning(
+                "Failed to revoke token with the auth service on logout", exc_info=True,
+                extra={"event": "logout", "outcome": "token_revocation_failed"},
+            )
 
-    logger.info("User '%s' logged out", get_request_username(request))
+    logger.info(
+        "User '%s' logged out", get_request_username(request),
+        extra={"event": "logout", "outcome": "success"},
+    )
 
     # Rotate the session here too, not just on login — an idle logged-out
     # browser shouldn't keep sitting on a session_key tied to whoever was

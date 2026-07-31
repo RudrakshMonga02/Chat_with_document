@@ -1,49 +1,10 @@
 """
 views.py — HTTP layer only.
 
-Bug fixes in this version:
-  1. chat_api guard checks DB for documents (not ephemeral session variable)
-  2. load_session updates the Django session key so the server knows which
-     session is active — fixes "please upload a document" after switching sessions
-  3. Every saved message is embedded into global history for cross-session RAG
-  4. delete_session also cleans up history embeddings
-  5. session_key resolution (override-aware) is now shared by every view that
-     needs it — previously upload_file used the raw Django session key even
-     while browsing a loaded past session, silently attaching new documents
-     to the wrong ChatSession
-  6. sessions were scoped per-browser via a lightweight cookie — since
-     removed (see fix 10) once login became the sole source of truth for
-     ownership
-  7. cross-session RAG (chat_api) is scoped to sessions this request can
-     see (_visible_session_keys) instead of the entire cross-user history
-  8. rename_session lets a chat be renamed any number of times; once
-     renamed, upload/remove-document stop overwriting the title
-     (ChatSession.title_locked)
-  9. login is now mandatory: index uses login_required (redirects to
-     /login/), every AJAX endpoint uses jwt_required (401 JSON, since
-     chat.js is what's calling them, not a page navigation)
-  10. fixed a real cross-account data leak: login/logout didn't rotate
-      Django's session cookie, so a stale session_key from a previous
-      account on a shared browser could resolve straight to their
-      ChatSession — auth_views now flushes the session on login/logout
-      (matching what django.contrib.auth's own login() does, via Django's
-      session framework directly — no dependency on django.contrib.auth
-      itself). _resolve_active_chat_session/_get_or_create_chat_session add
-      a defense-in-depth ownership check so a mismatched session_key can
-      never surface someone else's data even if rotation is ever bypassed
-      by a future bug. Root-caused via the same class of bug a second time
-      while testing this: _owns_session/_visible_session_keys also used to
-      trust the owned-sessions cookie from fix 6, which — same as the
-      Django session cookie — was never cleared on login/logout, so a
-      stale value there granted the SAME cross-account access this fix was
-      supposed to close. That cookie is gone now; account ownership
-      (ChatSession.owner) is the only thing either function trusts
 """
 
 import json
 import logging
-import re
-from datetime import datetime
 
 from django.conf import settings
 from django.db import IntegrityError
@@ -57,31 +18,17 @@ from .services import RAGService, RAGServiceError
 
 logger = logging.getLogger(__name__)
 
-# Matches the "verbose" formatter in settings.LOGGING:
-# "{levelname} {asctime} [{username}] {name} {message}". The bracketed
-# username is required by this pattern, so lines written before that field
-# existed simply won't match — see the fallback branch below.
 RECENT_LOGS_MAX_LINES = 2000
-_LOG_LINE_RE = re.compile(
-    r"^(?P<level>\w+) (?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) "
-    r"\[(?P<username>[^\]]*)\] (?P<logger>\S+) (?P<message>.*)$"
-)
-# Daphne colorizes its own access-log messages (e.g. "django.channels.server")
-# with raw ANSI escape codes before they ever reach logging's formatter, so
-# they end up written straight into the file. Strip them back out when
-# reading history — otherwise they show as garbage in the browser.
-_ANSI_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 
 
 def _read_recent_logs(username: str, max_lines=RECENT_LOGS_MAX_LINES):
-    """The last max_lines of the rotating log file belonging to username,
-    parsed into the same {level, logger, message, time} shape the live
-    websocket sends, so the frontend can render history and live lines
-    identically. Lines that don't match the formatter (e.g. traceback
-    continuation lines from exc_info=True) are folded into the previous
-    matching entry's message rather than shown as their own malformed line
-    — so a traceback that followed someone else's log line never gets
-    attached to this user's history instead."""
+    """The last max_lines of app.log belonging to username, in the same
+    shape the live websocket sends (see logging_handlers.ChannelsLogHandler),
+    so the frontend renders history and live lines identically. app.log is
+    always written as one JSON object per line (settings.LOGGING's "file"
+    handler always uses JSONFormatter, regardless of LOG_FORMAT) specifically
+    so this can parse it directly instead of reverse-engineering a
+    human-oriented text format the way this used to work."""
     log_path = settings.BASE_DIR / "logs" / "app.log"
     if not log_path.exists():
         return []
@@ -90,22 +37,22 @@ def _read_recent_logs(username: str, max_lines=RECENT_LOGS_MAX_LINES):
         lines = f.readlines()[-max_lines:]
 
     entries = []
-    last_matched_mine = False
     for raw in lines:
-        raw = _ANSI_RE.sub("", raw.rstrip("\n"))
-        match = _LOG_LINE_RE.match(raw)
-        if match:
-            last_matched_mine = match.group("username") == username
-            if last_matched_mine:
-                ts = datetime.strptime(match.group("timestamp"), "%Y-%m-%d %H:%M:%S,%f")
-                entries.append({
-                    "level": match.group("level"),
-                    "logger": match.group("logger"),
-                    "message": match.group("message"),
-                    "time": ts.timestamp(),
-                })
-        elif entries and last_matched_mine:
-            entries[-1]["message"] += "\n" + raw
+        raw = raw.strip()
+        if not raw:
+            continue
+        try:
+            record = json.loads(raw)
+        except ValueError:
+            continue  # a line from before JSON logging existed, or a partial write
+        if record.get("username") != username:
+            continue
+        entries.append({
+            "level": record.get("level"),
+            "logger": record.get("logger"),
+            "message": record.get("message"),
+            "time": record.get("timestamp_epoch"),
+        })
     return entries
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -123,11 +70,28 @@ def _resolve_active_session_key(request) -> str:
     return request.session.get("_active_session_key_override") or request.session.session_key
 
 
+def _session_belongs_to_caller(chat_session: ChatSession, request) -> bool:
+    """The one ownership check _get_or_create_chat_session and
+    _resolve_active_chat_session both need: an unclaimed session (no owner
+    yet) belongs to anyone; a claimed one belongs only to the matching
+    authenticated username. Factored out so the two call sites can't drift
+    out of sync with each other.
+
+    _owns_session below has a related but distinct check — it starts from
+    a bare session_key with no ChatSession fetched yet, and has its own
+    fast path for a session that doesn't have a row at all — so it's kept
+    separate rather than forced through this helper."""
+    if chat_session.owner_id is None:
+        return True
+    username = get_request_username(request)
+    return bool(username) and chat_session.owner.username == username
+
+
 def _get_or_create_chat_session(request, session_key: str) -> ChatSession:
     username = get_request_username(request)
     obj, created = ChatSession.objects.get_or_create(session_key=session_key)
 
-    if not created and obj.owner_id is not None and (not username or obj.owner.username != username):
+    if not created and not _session_belongs_to_caller(obj, request):
         # session_key resolves to somebody else's chat — a stale/reused
         # browser cookie, most likely. Login/logout now rotate the session
         # specifically to prevent this, but never trust that alone: reusing
@@ -136,6 +100,7 @@ def _get_or_create_chat_session(request, session_key: str) -> ChatSession:
         logger.warning(
             "Refusing to reuse ChatSession %s (owned by '%s') for authenticated user '%s' — rotating to a new session",
             session_key, obj.owner.username, username,
+            extra={"event": "session_ownership_conflict", "session_key": session_key},
         )
         request.session.flush()
         request.session.create()
@@ -158,8 +123,7 @@ def _resolve_active_chat_session(request, session_key: str) -> ChatSession | Non
     chat_session = ChatSession.objects.filter(session_key=session_key).first()
     if chat_session is None:
         return None
-    username = get_request_username(request)
-    if chat_session.owner_id is not None and (not username or chat_session.owner.username != username):
+    if not _session_belongs_to_caller(chat_session, request):
         return None
     return chat_session
 
@@ -216,6 +180,7 @@ def logs_page(request):
 def index(request):
     _ensure_session(request)
     session_key = _resolve_active_session_key(request)
+    username = get_request_username(request)
 
     chat_session = _resolve_active_chat_session(request, session_key)
     chat_history = (
@@ -228,7 +193,7 @@ def index(request):
         "documents": documents,
         "sessions": _session_list(_visible_session_keys(request)),
         "active_session_key": session_key,
-        "auth_username": get_request_username(request),
+        "auth_username": username,
     })
 
 
@@ -254,10 +219,28 @@ def upload_file(request):
             status=400,
         )
 
+    logger.info(
+        "Document upload started: '%s' in session %s", uploaded.name, session_key,
+        # NOTE: "filename" is a reserved LogRecord attribute name (the
+        # source file the log call was made from) — logging.Logger raises
+        # KeyError if extra= tries to overwrite it, so this field is named
+        # doc_filename throughout, not filename.
+        extra={"event": "document_upload_started", "session_key": session_key, "doc_filename": uploaded.name},
+    )
+
     try:
         service = RAGService.for_session(session_key)
         result = service.ingest(uploaded)
     except ValueError as e:
+        logger.warning(
+            "Document upload rejected: '%s' — %s", uploaded.name, e,
+            extra={
+                "event": "document_upload_failed",
+                "session_key": session_key,
+                "doc_filename": uploaded.name,
+                "reason": "invalid_file",
+            },
+        )
         return JsonResponse({"error": str(e)}, status=400)
     except RAGServiceError as e:
         return JsonResponse({"error": str(e)}, status=502)
@@ -284,7 +267,15 @@ def upload_file(request):
             chat_session.title = f"{chat_session.documents.first().filename} +{existing_count - 1} more"
     chat_session.save()
 
-    logger.info("Document '%s' uploaded to session %s (%d chunks)", result["filename"], session_key, result["chunk_count"])
+    logger.info(
+        "Document '%s' uploaded to session %s (%d chunks)", result["filename"], session_key, result["chunk_count"],
+        extra={
+            "event": "document_upload_completed",
+            "session_key": session_key,
+            "doc_filename": result["filename"],
+            "chunk_count": result["chunk_count"],
+        },
+    )
 
     visible_keys = list(set(_visible_session_keys(request)) | {session_key})
     return JsonResponse({
@@ -311,7 +302,10 @@ def remove_document(request, document_id):
 
     filename = doc.filename
     doc.delete()  # its Chroma chunks are cleaned up by the post_delete signal in signals.py
-    logger.info("Document '%s' removed from session %s", filename, chat_session.session_key)
+    logger.info(
+        "Document '%s' removed from session %s", filename, chat_session.session_key,
+        extra={"event": "document_removed", "session_key": chat_session.session_key, "doc_filename": filename},
+    )
 
     if not chat_session.title_locked:
         remaining = list(chat_session.documents.all())
@@ -354,7 +348,10 @@ def chat_api(request):
     if not question:
         return JsonResponse({"error": "Question cannot be empty."}, status=400)
 
-    logger.info("Question asked in session %s: %s", session_key, question[:200])
+    logger.info(
+        "Question asked in session %s: %s", session_key, question[:200],
+        extra={"event": "chat_message_received", "session_key": session_key},
+    )
 
     # Last 10 messages = 5 turns of current session context
     recent = list(chat_session.messages.order_by("-created_at")[:10])
@@ -375,7 +372,10 @@ def chat_api(request):
     except RAGServiceError as e:
         return JsonResponse({"error": str(e)}, status=502)
 
-    logger.info("Answer generated for session %s (%d chars)", session_key, len(answer))
+    logger.info(
+        "Answer generated for session %s (%d chars)", session_key, len(answer),
+        extra={"event": "chat_message_answered", "session_key": session_key, "answer_length": len(answer)},
+    )
 
     # Save both turns to DB
     user_msg = ChatMessage.objects.create(session=chat_session, role="user", content=question)
@@ -413,7 +413,10 @@ def new_session(request):
     request.session.flush()
     request.session.create()
 
-    logger.info("New chat session created: %s", request.session.session_key)
+    logger.info(
+        "New chat session created: %s", request.session.session_key,
+        extra={"event": "session_created", "session_key": request.session.session_key},
+    )
 
     return JsonResponse({
         "sessions": _session_list(_visible_session_keys(request)),
@@ -473,7 +476,10 @@ def delete_session(request, session_key):
     # so it runs consistently regardless of where the delete is triggered from
     # (this view, the admin, a shell command, etc).
     chat_session.delete()
-    logger.info("Chat session deleted: %s", session_key)
+    logger.info(
+        "Chat session deleted: %s", session_key,
+        extra={"event": "session_deleted", "session_key": session_key},
+    )
 
     if was_active:
         request.session.flush()
@@ -512,7 +518,10 @@ def rename_session(request, session_key):
     chat_session.title_locked = True
     chat_session.save()
 
-    logger.info("Session %s renamed to '%s'", session_key, chat_session.title)
+    logger.info(
+        "Session %s renamed to '%s'", session_key, chat_session.title,
+        extra={"event": "session_renamed", "session_key": session_key},
+    )
 
     visible_keys = list(set(_visible_session_keys(request)) | {session_key})
     return JsonResponse({

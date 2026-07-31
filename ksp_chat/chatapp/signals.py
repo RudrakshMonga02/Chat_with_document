@@ -23,14 +23,34 @@ def cleanup_chroma_for_session(sender, instance, **kwargs):
     from .repository import ChromaVectorRepository, HistoryVectorRepository
 
     session_key = instance.session_key
+    # Two independent try/except blocks, deliberately: a failure cleaning up
+    # the session's document collection shouldn't skip cleaning up its
+    # history embeddings too, and vice versa.
     try:
         ChromaVectorRepository(session_key).reset()
     except Exception:
-        logger.exception("Failed to clean up Chroma collection for session %s", session_key)
+        logger.exception(
+            "Failed to clean up Chroma collection for session %s", session_key,
+            extra={"event": "chroma_cleanup_failed", "session_key": session_key, "target": "session_collection"},
+        )
+    else:
+        logger.debug(
+            "Cleaned up Chroma collection for session %s", session_key,
+            extra={"event": "chroma_cleanup_completed", "session_key": session_key, "target": "session_collection"},
+        )
+
     try:
         HistoryVectorRepository().delete_session_messages(session_key)
     except Exception:
-        logger.exception("Failed to clean up history embeddings for session %s", session_key)
+        logger.exception(
+            "Failed to clean up history embeddings for session %s", session_key,
+            extra={"event": "chroma_cleanup_failed", "session_key": session_key, "target": "history_messages"},
+        )
+    else:
+        logger.debug(
+            "Cleaned up history embeddings for session %s", session_key,
+            extra={"event": "chroma_cleanup_completed", "session_key": session_key, "target": "history_messages"},
+        )
 
 
 @receiver(post_delete, sender=Document)
@@ -51,4 +71,10 @@ def cleanup_chroma_for_document(sender, instance, **kwargs):
         logger.exception(
             "Failed to clean up Chroma chunks for document '%s' in session %s",
             instance.filename, session_key,
+            extra={"event": "chroma_cleanup_failed", "session_key": session_key, "target": "document_chunks"},
+        )
+    else:
+        logger.debug(
+            "Cleaned up Chroma chunks for document '%s' in session %s", instance.filename, session_key,
+            extra={"event": "chroma_cleanup_completed", "session_key": session_key, "target": "document_chunks"},
         )

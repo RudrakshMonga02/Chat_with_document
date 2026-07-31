@@ -1,5 +1,9 @@
-{# Shared sidebar footer nav — included by index.html and logs.html so the
-   two pages can link to each other and stay visually consistent. #}
+{% comment %}
+Shared sidebar nav — included by index.html and logs.html so the two pages
+can link to each other and stay visually consistent. Deliberately has no
+admin entry point — the admin area is a completely separate destination
+the chat app never links to or knows about.
+{% endcomment %}
 <div class="sidebar-footer">
     <a href="{% url 'index' %}"
        class="sidebar-footer-btn {% if request.resolver_match.url_name == 'index' %}active{% endif %}">

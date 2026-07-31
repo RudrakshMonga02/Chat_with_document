@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Users</title>
+    <link rel="stylesheet" href="{% static 'chatapp/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'chatapp/css/admin.css' %}">
+</head>
+<body class="admin-body">
+    {% csrf_token %}
+
+    <!-- Own nav bar — deliberately not the chat app's sidebar. The admin
+         area has nothing to do with chat/documents/logs, so it doesn't
+         share that navigation at all. -->
+    <nav class="admin-nav">
+        <span class="admin-nav-brand">🛡️ Admin</span>
+        <div class="admin-nav-links">
+            <a href="{% url 'admin_users_page' %}" class="admin-nav-link active">Users</a>
+        </div>
+        <form method="post" action="{% url 'admin_logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="admin-nav-logout-btn">Log out</button>
+        </form>
+    </nav>
+
+    <main class="admin-main">
+        <h1 class="admin-page-heading">Users</h1>
+
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Status</th>
+                    <th>Chats</th>
+                    <th>Joined</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="users-table-body">
+                {% for u in users %}
+                    <tr data-username="{{ u.username }}">
+                        <td>{{ u.username }}</td>
+                        <td>
+                            {% if u.is_active %}
+                                <span class="status-badge active">Active</span>
+                            {% else %}
+                                <span class="status-badge banned">Removed</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ u.chat_session_count }}</td>
+                        <td>{{ u.created_at|date:"Y-m-d H:i" }}</td>
+                        <td class="users-table-actions">
+                            {% if u.is_active %}
+                                <button class="user-remove-btn" data-username="{{ u.username }}">Remove</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5" class="users-table-empty">No users yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+
+    <script>
+        // Apply saved theme preference here too, same as every other page.
+        const t = localStorage.getItem("theme");
+        if (t === "dark") document.documentElement.setAttribute("data-theme", "dark");
+    </script>
+    <script src="{% static 'chatapp/js/admin_users.js' %}"></script>
+</body>
+</html>

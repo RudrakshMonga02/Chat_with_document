@@ -7,11 +7,14 @@ Two repositories:
                             (used for cross-session context retrieval)
 """
 
+import logging
 import uuid
 from abc import ABC, abstractmethod
 
 import chromadb
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 _chroma_client = chromadb.PersistentClient(path=settings.CHROMA_PERSIST_DIR)
 
@@ -81,7 +84,13 @@ class ChromaVectorRepository(BaseVectorRepository):
         try:
             _chroma_client.delete_collection(name=self._collection_name)
         except Exception:
-            pass  # already gone — fine
+            # Previously a bare `pass` — likely just means the collection
+            # was already gone, but that was never distinguishable from a
+            # genuine Chroma failure since neither case logged anything.
+            logger.debug(
+                "Chroma collection '%s' was already absent during reset()",
+                self._collection_name, exc_info=True,
+            )
 
     def count(self) -> int:
         return self._collection.count()

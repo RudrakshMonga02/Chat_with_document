@@ -15,7 +15,25 @@ from django.db import models
 
 
 class AppUser(models.Model):
+    # No role field — every AppUser row is a regular chat-app user. Admin is
+    # a single hardcoded identity (settings.ADMIN_USERNAME/PASSWORD, see
+    # chatapp/admin_auth.py) that never goes through this table at all, so
+    # there's nothing here to distinguish.
     username = models.CharField(max_length=150, unique=True, db_index=True)
+    # Immutable IdP-issued identifier — groundwork for the day the external
+    # auth service's JWT starts carrying one (see
+    # chatapp.authentication.extract_subject_id). Nullable/unique-when-set:
+    # every row works exactly as before (looked up by username) until then.
+    # Once populated, this becomes the real identity join key instead of the
+    # mutable username, so a rename/reuse on the IdP side can't silently
+    # merge a new account into an old one's chat history.
+    subject_id = models.CharField(max_length=255, unique=True, null=True, blank=True, db_index=True)
+    # Local-only revocation: the auth service is never told about this and
+    # keeps considering an inactive user's token perfectly valid. Setting
+    # this to False just means JWTAuthenticationMiddleware stops honoring
+    # that token here — same name/convention as django.contrib.auth's own
+    # User.is_active, used the same way (soft-disable, not a real delete).
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -28,9 +46,10 @@ class ChatSession(models.Model):
     # Set once the user manually renames the chat — stops upload/remove from
     # silently overwriting their chosen name with an auto-generated one.
     title_locked = models.BooleanField(default=False)
-    # Anonymous sessions have no owner. Login is optional (see auth_views.py)
-    # — SET_NULL rather than CASCADE so an AppUser row disappearing never
-    # takes a chat's history with it, it just goes back to anonymous-only.
+    # SET_NULL rather than CASCADE so an AppUser row disappearing (e.g. an
+    # admin removing the account) never silently destroys chat history —
+    # removing a user's data is a separate, explicit action (see
+    # views.remove_user), not a side effect of deleting the AppUser row.
     owner = models.ForeignKey(
         AppUser,
         on_delete=models.SET_NULL,

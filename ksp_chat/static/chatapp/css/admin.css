@@ -1,0 +1,128 @@
+/* admin.css — the admin area only. Deliberately its own layout (a top nav
+   bar, no sidebar/chat chrome) rather than reusing style.css's chat-app
+   structure — this is a genuinely separate surface, not another tab in the
+   same shell. Still pulls its color variables from style.css's :root so
+   light/dark mode stay consistent across the whole app. */
+
+body.admin-body {
+    min-height: 100vh;
+    background: var(--bg-body);
+    color: var(--text-primary);
+}
+
+.admin-nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 14px 28px;
+    background: var(--bg-sidebar);
+    border-bottom: 1px solid var(--border-sidebar);
+}
+
+.admin-nav-brand {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-sidebar);
+    white-space: nowrap;
+}
+
+.admin-nav-links {
+    display: flex;
+    gap: 6px;
+    flex: 1;
+}
+
+.admin-nav-link {
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-sidebar-dim);
+    text-decoration: none;
+    transition: background 0.12s, color 0.12s;
+}
+
+.admin-nav-link:hover { background: rgba(255,255,255,0.07); color: var(--text-sidebar); }
+.admin-nav-link.active { background: rgba(91,91,255,0.25); color: #ffffff; }
+
+.admin-nav-logout-btn {
+    padding: 7px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-sidebar);
+    background: none;
+    color: var(--text-sidebar-dim);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+}
+
+.admin-nav-logout-btn:hover { background: rgba(255,255,255,0.07); color: var(--text-sidebar); }
+
+.admin-main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 28px;
+}
+
+.admin-page-heading {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+}
+
+.users-table th {
+    text-align: left;
+    padding: 10px 14px;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid var(--border);
+}
+
+.users-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+}
+
+.users-table-empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 24px;
+}
+
+.users-table-actions { text-align: right; }
+
+.status-badge {
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+}
+
+.status-badge.active { color: #1e9e5a; background: rgba(46,204,113,0.12); }
+.status-badge.banned { color: #d13c4b; background: rgba(255,91,110,0.12); }
+
+.user-remove-btn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(224,49,49,0.3);
+    background: none;
+    color: #e03131;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.user-remove-btn:hover:not(:disabled) { background: rgba(224,49,49,0.1); }
+.user-remove-btn:disabled { opacity: 0.5; cursor: not-allowed; }

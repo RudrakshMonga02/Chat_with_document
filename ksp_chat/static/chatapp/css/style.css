@@ -710,13 +710,14 @@ body {
 #send-button:hover    { background: var(--accent-hover); }
 
 /* =========================================================
-   Sidebar footer nav — Chats / Logs, pinned to the bottom of
-   the sidebar (sidebar-body is flex:1, so this sits below it)
+   Sidebar nav — Chats / Logs, pinned under the sidebar header
+   (class name kept as "footer" from when it sat at the bottom —
+   purely a naming leftover, doesn't affect layout)
    ========================================================= */
 .sidebar-footer {
     flex-shrink: 0;
     padding: 10px 12px;
-    border-top: 1px solid var(--border-sidebar);
+    border-bottom: 1px solid var(--border-sidebar);
     display: flex;
     flex-direction: column;
     gap: 4px;

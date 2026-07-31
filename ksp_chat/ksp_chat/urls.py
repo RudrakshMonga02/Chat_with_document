@@ -14,10 +14,19 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', include('chatapp.urls')),
 ]
+
+# Gated behind DJANGO_ADMIN_ENABLED (see ksp_chat/settings.py): this is
+# Django's own built-in admin site, a separate identity system from both
+# this app's JWT auth and its own /users/ admin dashboard (chatapp/
+# admin_auth.py). Off by default, so /admin/ returns a normal 404 unless
+# explicitly opted into — it can never come alive just because a
+# django.contrib.auth superuser happens to exist in the database.
+if settings.DJANGO_ADMIN_ENABLED:
+    urlpatterns.insert(0, path('admin/', admin.site.urls))
