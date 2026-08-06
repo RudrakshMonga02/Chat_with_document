@@ -38,7 +38,7 @@ import logging
 import time
 import uuid
 
-from .authentication import AUTH_COOKIE_NAME, extract_subject_id, resolve_local_app_user, verify_jwt
+from .authentication import AUTH_COOKIE_NAME, extract_role, extract_subject_id, resolve_local_app_user, verify_jwt
 from .log_context import (
     current_correlation_id,
     current_endpoint,
@@ -62,14 +62,36 @@ class JWTAuthenticationMiddleware:
     def __call__(self, request):
         token = request.COOKIES.get(AUTH_COOKIE_NAME)
         username = verify_jwt(token) if token else None
-        # Only worth decoding again for subject_id when the first decode
-        # already succeeded — an invalid/absent token needs no second look.
+        # Only worth decoding again for subject_id/role when the first
+        # decode already succeeded — an invalid/absent token needs no
+        # second look.
         subject_id = extract_subject_id(token) if username else None
+        role = extract_role(token) if username else None
 
         app_user = resolve_local_app_user(username, subject_id) if username else None
         if username and app_user is not None and not app_user.is_active:
             username = None
         request.jwt_username = username
+        request.jwt_role = role
+        # Plain request attributes, not just the ContextVars set below —
+        # RequestContextLoggingMiddleware wraps this middleware (see its own
+        # docstring for why) and logs request_completed only after
+        # get_response() returns, by which point this middleware's own
+        # `finally` block below has already reset the ContextVars back to
+        # their prior value. request.jwt_username/jwt_user_id survive that
+        # reset (they're plain attributes on the shared request object, not
+        # context-local state), so that one log line can read the real
+        # values directly instead of picking up whatever the ContextVar
+        # already reset to.
+        request.jwt_user_id = app_user.id if (username and app_user is not None) else None
+
+        # Self-heal the local AppUser.role shadow from the JWT on every
+        # request — same pattern as the ban check above, so a role change
+        # on the auth service side is reflected here without a separate
+        # sync step, once this user's token/requests catch up.
+        if username and app_user is not None and app_user.role != role:
+            app_user.role = role
+            app_user.save(update_fields=["role"])
 
         username_token = current_username.set(username)
         # Only meaningful when username survived the ban check above — a
@@ -122,6 +144,8 @@ class RequestContextLoggingMiddleware:
                     "event": "request_completed",
                     "status_code": response.status_code,
                     "duration_ms": duration_ms,
+                    "username": getattr(request, "jwt_username", None),
+                    "user_id": getattr(request, "jwt_user_id", None),
                 },
             )
             return response

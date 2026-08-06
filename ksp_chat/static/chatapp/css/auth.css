@@ -73,39 +73,6 @@
     color: var(--text-muted);
 }
 
-.auth-role-label {
-    font-size: 13.5px;
-    font-weight: 500;
-    color: var(--text-secondary);
-}
-
-.auth-role-options {
-    display: flex;
-    gap: 10px;
-}
-
-.auth-role-option {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 9px;
-    border: 1px solid var(--border-input);
-    border-radius: 9px;
-    font-size: 13.5px;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: border-color 0.15s, color 0.15s, background 0.15s;
-}
-
-.auth-role-option:has(input:checked) {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--bg-hover-light);
-    font-weight: 600;
-}
-
 .auth-error {
     background: rgba(224, 49, 49, 0.08);
     border: 1px solid rgba(224, 49, 49, 0.25);

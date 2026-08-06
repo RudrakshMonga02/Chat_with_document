@@ -17,8 +17,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
-from .admin_auth import ADMIN_SESSION_KEY, check_admin_credentials, is_admin_request
-from .authentication import AUTH_COOKIE_NAME, get_request_username
+from .authentication import AUTH_COOKIE_NAME, extract_role, get_request_role, get_request_username
 from .log_context import current_correlation_id
 from .models import AppUser
 
@@ -38,46 +37,19 @@ def _correlation_headers() -> dict:
 @require_http_methods(["GET", "POST"])
 def login_view(request):
     if get_request_username(request):
-        return HttpResponseRedirect(reverse("index"))
-    if is_admin_request(request):
-        return HttpResponseRedirect(reverse("admin_users_page"))
+        return HttpResponseRedirect(
+            reverse("admin_users_page") if get_request_role(request) == "admin" else reverse("index")
+        )
 
     if request.method == "GET":
         return render(request, "chatapp/login.html", {})
 
-    role = request.POST.get("role") or "user"
     username = (request.POST.get("username") or "").strip()
     password = request.POST.get("password") or ""
 
     if not username or not password:
-        return render(request, "chatapp/login.html", {
-            "error": "Username and password are required.",
-            "role": role,
-        })
+        return render(request, "chatapp/login.html", {"error": "Username and password are required."})
 
-    if role == "admin":
-        # Checked locally first, with no network call — the auth service has
-        # no concept of "admin" at all, this never goes anywhere near it.
-        if not check_admin_credentials(username, password):
-            logger.warning(
-                "Failed admin login attempt for username '%s'", username,
-                extra={"event": "admin_login_failed"},
-            )
-            return render(request, "chatapp/login.html", {
-                "error": "This admin doesn't exist. Contact the owner for help.",
-                "role": "admin",
-            })
-
-        # Same session-rotation hygiene as a regular login below — a fresh
-        # session on every successful authentication, admin or not.
-        request.session.flush()
-        request.session.create()
-        request.session[ADMIN_SESSION_KEY] = True
-        logger.info("Admin login succeeded", extra={"event": "admin_login_success"})
-        return HttpResponseRedirect(reverse("admin_users_page"))
-
-    # role == "user" — existing flow, completely unchanged from before the
-    # role selector existed.
     try:
         resp = requests.post(
             f"{settings.AUTH_SERVICE_BASE_URL}/login",
@@ -99,11 +71,15 @@ def login_view(request):
     if not token:
         return render(request, "chatapp/login.html", {"error": "Unexpected response from the auth service."})
 
-    # Ensures the AppUser shadow row exists as soon as someone logs in, not
-    # just the first time they upload something (_get_or_create_chat_session
-    # in views.py would also lazily create it, but there's no reason to wait).
-    AppUser.objects.get_or_create(username=username)
-    logger.info("User '%s' logged in", username, extra={"event": "login_success"})
+    role = extract_role(token)
+
+    # Ensures the AppUser shadow row exists (with a fresh role) as soon as
+    # someone logs in, not just the first time they upload something
+    # (_get_or_create_chat_session in views.py would also lazily create it,
+    # but there's no reason to wait) — and not just on their next request
+    # (JWTAuthenticationMiddleware self-heals role too, see middleware.py).
+    AppUser.objects.update_or_create(username=username, defaults={"role": role})
+    logger.info("User '%s' logged in", username, extra={"event": "login_success", "role": role})
 
     # Rotate the Django session on every login — without this, whatever
     # session_key this browser already had (e.g. left over from a previous
@@ -114,7 +90,7 @@ def login_view(request):
     request.session.flush()
     request.session.create()
 
-    response = HttpResponseRedirect(reverse("index"))
+    response = HttpResponseRedirect(reverse("admin_users_page") if role == "admin" else reverse("index"))
     response.set_cookie(
         AUTH_COOKIE_NAME,
         token,

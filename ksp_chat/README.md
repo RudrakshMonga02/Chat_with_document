@@ -23,14 +23,20 @@ its own documents and history, plus an admin dashboard and a live log viewer.
 
 This app is a **resource server only** — login/registration/logout are thin proxies
 to an external FastAPI JWT auth service (`AUTH_SERVICE_BASE_URL`), which owns
-credentials and token issuance. There are two more, entirely separate identities
-worth knowing about:
+credentials, token issuance, and now roles: every issued JWT carries a `role`
+claim (`user` or `admin`), verified locally the same way as the rest of the token.
 
-- A single hardcoded admin account (`ADMIN_USERNAME`/`ADMIN_PASSWORD`) for this app's
-  own small dashboard at `/users/` — lets you view registered accounts and ban one.
-- Django's own built-in admin site at `/admin/` (`django.contrib.auth`'s
-  `User`/`is_staff`/`is_superuser`) — off by default (see `DJANGO_ADMIN_ENABLED`
-  below), since it's unrelated to both systems above.
+Admin is a real role on a real account, not a separate identity — logging in as
+an account with `role=admin` redirects to this app's own small dashboard at
+`/users/` (view registered accounts, create new ones, and ban one) instead of
+the chat UI. New accounts created from `/users/` are always plain users — an
+admin can't create another admin this way, on purpose. The only way to get a
+new admin account is directly on the auth service (see that project's README),
+which requires server/filesystem access, not just an admin login here.
+
+Django's own built-in admin site at `/admin/` (`django.contrib.auth`'s
+`User`/`is_staff`/`is_superuser`) is a separate, third identity system — off by
+default (see `DJANGO_ADMIN_ENABLED` below), unrelated to the JWT/role system above.
 
 ## Project layout
 
@@ -41,7 +47,7 @@ chatapp/
   embeddings.py / llm.py / extractors.py   <- Strategy/Factory implementations (Gemini, PDF/TXT)
   authentication.py / middleware.py / channels_auth.py   <- JWT verification, request context
   auth_views.py         <- login/register/logout (proxied to the external auth service)
-  admin_auth.py / admin_views.py           <- this app's own single-admin dashboard (/users/)
+  admin_auth.py / admin_views.py           <- admin dashboard (/users/), gated by JWT role
   consumers.py / routing.py / logging_handlers.py / log_context.py  <- live log viewer
   views.py              <- chat/session/document HTTP endpoints
   models.py             <- AppUser, ChatSession, Document, ChatMessage
@@ -79,8 +85,10 @@ logs/app.log              <- structured (JSON-lines) application log
 
 6. Open http://127.0.0.1:8000/ → register a new account (or log in) → upload a PDF
    or TXT → start chatting.
-   - Admin dashboard: http://127.0.0.1:8000/users/ (needs `ADMIN_USERNAME`/
-     `ADMIN_PASSWORD` set)
+   - Admin dashboard: http://127.0.0.1:8000/users/ — log in with the account
+     seeded by the auth service's `INITIAL_ADMIN_USERNAME`/`INITIAL_ADMIN_PASSWORD`
+     (see that project's README); every further admin is created from this
+     dashboard itself.
    - Live logs: http://127.0.0.1:8000/logs/ (any logged-in account, unless
      `LOG_VIEWER_USERS` restricts it)
 
@@ -105,12 +113,7 @@ All of these are read from a `.env` file next to `manage.py` (via `python-dotenv
 | `AUTH_JWT_EXPECTED_ISS` | *(empty, skipped)* | Optional hardening — only set this once the auth service actually sends an `iss` claim; turning it on before then locks everyone out. |
 | `AUTH_JWT_EXPECTED_AUD` | *(empty, skipped)* | Same, for the `aud` claim. |
 
-**This app's own admin dashboard** (`/users/`) — unrelated to the auth service above
-| Variable | Default | Notes |
-|---|---|---|
-| `ADMIN_USERNAME` / `ADMIN_PASSWORD` | *(empty)* | A single hardcoded admin identity. Left unset, `/users/` is simply unreachable. |
-
-**Django's built-in admin site** (`/admin/`) — a third, separate identity system
+**Django's built-in admin site** (`/admin/`) — a separate identity system
 | Variable | Default | Notes |
 |---|---|---|
 | `DJANGO_ADMIN_ENABLED` | `False` | Only set `True` if you deliberately want `/admin/` reachable (its own `django.contrib.auth` superuser system) — e.g. for local DB inspection. |

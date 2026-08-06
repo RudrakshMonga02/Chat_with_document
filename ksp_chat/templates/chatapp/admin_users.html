@@ -19,7 +19,7 @@
         <div class="admin-nav-links">
             <a href="{% url 'admin_users_page' %}" class="admin-nav-link active">Users</a>
         </div>
-        <form method="post" action="{% url 'admin_logout' %}">
+        <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
             <button type="submit" class="admin-nav-logout-btn">Log out</button>
         </form>
@@ -28,10 +28,22 @@
     <main class="admin-main">
         <h1 class="admin-page-heading">Users</h1>
 
+        <section class="admin-create-user">
+            <h2 class="admin-section-heading">Create user</h2>
+            <form id="create-user-form" class="admin-create-user-form">
+                <input type="text" name="username" placeholder="Username" required autocomplete="off">
+                <input type="password" name="password" placeholder="Password" required autocomplete="new-password">
+                <button type="submit" class="admin-create-user-btn">Create</button>
+            </form>
+            <p class="admin-create-user-hint">New accounts are always created as regular users — admin accounts can only be set up server-side.</p>
+            <div id="create-user-error" class="admin-create-user-error" hidden></div>
+        </section>
+
         <table class="users-table">
             <thead>
                 <tr>
                     <th>Username</th>
+                    <th>Role</th>
                     <th>Status</th>
                     <th>Chats</th>
                     <th>Joined</th>
@@ -42,6 +54,7 @@
                 {% for u in users %}
                     <tr data-username="{{ u.username }}">
                         <td>{{ u.username }}</td>
+                        <td><span class="role-badge {{ u.role }}">{{ u.role }}</span></td>
                         <td>
                             {% if u.is_active %}
                                 <span class="status-badge active">Active</span>
@@ -58,7 +71,7 @@
                         </td>
                     </tr>
                 {% empty %}
-                    <tr><td colspan="5" class="users-table-empty">No users yet.</td></tr>
+                    <tr><td colspan="6" class="users-table-empty">No users yet.</td></tr>
                 {% endfor %}
             </tbody>
         </table>

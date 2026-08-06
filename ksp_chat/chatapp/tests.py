@@ -9,7 +9,6 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from jose import jwt
 
-from .admin_auth import check_admin_credentials
 from .authentication import AUTH_COOKIE_NAME
 from .channels_auth import JWTAuthMiddlewareStack
 from .models import AppUser
@@ -53,7 +52,7 @@ class RequestLoggingTests(TestCase):
     def test_login_attempt_never_logs_the_password(self):
         secret = "sekrit-test-password-should-never-appear-in-logs"
         with self.assertLogs("chatapp", level="DEBUG") as captured:
-            self.client.post("/login/", {"role": "user", "username": "someone", "password": secret})
+            self.client.post("/login/", {"username": "someone", "password": secret})
 
         for record in captured.records:
             self.assertNotIn(secret, record.getMessage())
@@ -141,16 +140,51 @@ class UploadRegressionTests(TestCase):
         self.assertNotEqual(response.status_code, 500)
 
 
-@override_settings(ADMIN_USERNAME="admin", ADMIN_PASSWORD="s3cret-pw")
-class AdminCredentialCheckTests(TestCase):
-    """Confirms check_admin_credentials still does exactly what it did
-    before switching from == to hmac.compare_digest."""
+@override_settings(AUTH_JWT_SECRET_KEY="test-secret-key", AUTH_JWT_ALGORITHM="HS256")
+class AdminRoleGateTests(TestCase):
+    """Admin is now a real JWT role claim, not a separate hardcoded
+    identity — confirms admin_auth.admin_page_required reads it correctly:
+    anonymous -> /login/, authenticated-but-not-admin -> chat index,
+    role=admin -> the dashboard itself."""
 
-    def test_correct_credentials_are_accepted(self):
-        self.assertTrue(check_admin_credentials("admin", "s3cret-pw"))
+    @staticmethod
+    def _token_for(username, role):
+        return jwt.encode(
+            {"sub": username, "role": role, "exp": datetime.now(timezone.utc) + timedelta(minutes=5)},
+            "test-secret-key",
+            algorithm="HS256",
+        )
 
-    def test_wrong_password_is_rejected(self):
-        self.assertFalse(check_admin_credentials("admin", "wrong"))
+    def test_anonymous_request_redirects_to_login(self):
+        response = self.client.get("/users/")
+        self.assertRedirects(response, "/login/")
 
-    def test_wrong_username_is_rejected(self):
-        self.assertFalse(check_admin_credentials("someone-else", "s3cret-pw"))
+    def test_non_admin_request_redirects_to_chat_index(self):
+        self.client.cookies[AUTH_COOKIE_NAME] = self._token_for("regularuser", "user")
+        response = self.client.get("/users/")
+        self.assertRedirects(response, "/")
+
+    def test_admin_request_reaches_the_dashboard(self):
+        self.client.cookies[AUTH_COOKIE_NAME] = self._token_for("adminuser", "admin")
+        response = self.client.get("/users/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_admin_is_redirected_away_from_chat_index(self):
+        # An admin might still own chat history from before being promoted
+        # (or just type the URL) — confirms login_required now refuses that
+        # rather than serving the regular chat UI to an admin-role account.
+        self.client.cookies[AUTH_COOKIE_NAME] = self._token_for("adminuser", "admin")
+        response = self.client.get("/")
+        self.assertRedirects(response, "/users/")
+
+    def test_admin_is_refused_on_chat_ajax_endpoints(self):
+        # Same restriction on jwt_required — the AJAX/fetch() side used by
+        # upload/chat/session endpoints, not just full-page views.
+        self.client.cookies[AUTH_COOKIE_NAME] = self._token_for("adminuser", "admin")
+        response = self.client.post("/chat/", data=json.dumps({"question": "hi"}), content_type="application/json")
+        self.assertEqual(response.status_code, 403)
+
+    def test_regular_user_is_unaffected_on_chat_index(self):
+        self.client.cookies[AUTH_COOKIE_NAME] = self._token_for("regularuser", "user")
+        response = self.client.get("/")
+        self.assertEqual(response.status_code, 200)

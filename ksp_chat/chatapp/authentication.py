@@ -88,6 +88,28 @@ def extract_subject_id(token: str) -> str | None:
     return payload.get("subject_id") or payload.get("uid")
 
 
+def extract_role(token: str) -> str:
+    """The `role` claim, if this token carries one. Defaults to "user" for
+    a token minted before this claim existed, or if it's simply absent —
+    never fails closed into treating a missing claim as admin. Same
+    decode-again shape as extract_subject_id: only ever called after
+    verify_jwt has already succeeded for this token, so this decode always
+    succeeds too."""
+    if not token or not settings.AUTH_JWT_SECRET_KEY:
+        return "user"
+    try:
+        payload = jwt.decode(
+            token,
+            settings.AUTH_JWT_SECRET_KEY,
+            algorithms=[settings.AUTH_JWT_ALGORITHM],
+            audience=settings.AUTH_JWT_EXPECTED_AUD or None,
+            issuer=settings.AUTH_JWT_EXPECTED_ISS or None,
+        )
+    except JWTError:
+        return "user"
+    return payload.get("role") or "user"
+
+
 def get_request_username(request) -> str | None:
     """The authenticated username for this request, or None if anonymous.
     Populated on every request by JWTAuthenticationMiddleware. Already
@@ -96,6 +118,13 @@ def get_request_username(request) -> str | None:
     valid, so every existing check against this function stays correct
     with zero changes."""
     return getattr(request, "jwt_username", None)
+
+
+def get_request_role(request) -> str:
+    """The authenticated role for this request ("user" by default,
+    including for anonymous requests — never treat "no role set" as admin).
+    Populated on every request by JWTAuthenticationMiddleware."""
+    return getattr(request, "jwt_role", None) or "user"
 
 
 def resolve_local_app_user(username: str, subject_id: str | None = None):
@@ -137,12 +166,21 @@ def jwt_required(view_func):
     Returns a 401 JSON error (not a redirect) since every view using this
     is called via fetch() from chat.js — chat.js redirects to /login/ itself
     on a 401 (see handleAuthExpiry), which also covers a token expiring
-    mid-session without a page reload."""
+    mid-session without a page reload.
+
+    An admin-role account is authenticated but still refused here — admin
+    is restricted to the /users/ dashboard, not an additional way to use
+    the chat app. Without this, an admin account that had chat history
+    from before being promoted (or one that just typed a chat URL) could
+    use every chat feature exactly like a regular user, which was never a
+    deliberate choice, just an unblocked path."""
 
     @functools.wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if not get_request_username(request):
             return JsonResponse({"error": "Authentication required."}, status=401)
+        if get_request_role(request) == "admin":
+            return JsonResponse({"error": "Admin accounts can't use the chat app."}, status=403)
         return view_func(request, *args, **kwargs)
 
     return wrapper
@@ -151,12 +189,17 @@ def jwt_required(view_func):
 def login_required(view_func):
     """View decorator for HTML page views that must be authenticated.
     Redirects to the login page rather than returning JSON — use jwt_required
-    instead for endpoints called via fetch()."""
+    instead for endpoints called via fetch().
+
+    Same admin restriction as jwt_required, redirected to the dashboard
+    instead of a JSON error since this gates full page views."""
 
     @functools.wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if not get_request_username(request):
             return HttpResponseRedirect(reverse("login"))
+        if get_request_role(request) == "admin":
+            return HttpResponseRedirect(reverse("admin_users_page"))
         return view_func(request, *args, **kwargs)
 
     return wrapper

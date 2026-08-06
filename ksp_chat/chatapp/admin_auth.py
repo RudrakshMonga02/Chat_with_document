@@ -1,55 +1,28 @@
 """
-admin_auth.py — authentication for the admin area, deliberately independent
-from authentication.py's JWT-based user auth.
+admin_auth.py — access control for the admin area.
 
-There is exactly one admin identity: a hardcoded username/password
-(settings.ADMIN_USERNAME/ADMIN_PASSWORD), checked with a plain comparison.
-It is never issued by the external auth service, never tied to an AppUser
-row, and never created through registration — admin access is granted by
-whoever configures those two settings, not by anything self-service.
-
-An admin session is tracked with a plain flag in Django's own session
-framework (request.session), the same mechanism this app already uses for
-session_key/ChatSession — not a JWT, not a cookie of its own. There's one
-admin identity, not a table of them, so there's nothing to look up on each
-request beyond "is this flag set."
+Admin is now a real role on a real JWT-authenticated AppUser account (the
+`role` claim, issued by the external auth service, verified the same way
+as any other request — see chatapp/authentication.py and middleware.py).
+There is no longer a separate hardcoded admin identity or session flag:
+`admin_required`/`admin_page_required` below just add a role check on top
+of the same authentication every other view already uses.
 """
 
 import functools
-import hmac
 
-from django.conf import settings
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 
-ADMIN_SESSION_KEY = "is_admin"
-
-
-def check_admin_credentials(username: str, password: str) -> bool:
-    """True only if both settings are configured AND match exactly. Always
-    False if either is left unset, so a misconfigured/fresh deployment
-    can't be logged into with a blank username/password.
-
-    Uses hmac.compare_digest (constant-time) rather than == — this is the
-    one login form on the whole site checked against a fixed value instead
-    of anything hashed/rate-limited, so it's worth not leaking match-length
-    information through a fast-fail string comparison, even though the
-    single-operator deployment model here makes that a low-severity gap."""
-    if not settings.ADMIN_USERNAME or not settings.ADMIN_PASSWORD:
-        return False
-    return hmac.compare_digest(
-        username.encode("utf-8"), settings.ADMIN_USERNAME.encode("utf-8")
-    ) and hmac.compare_digest(
-        password.encode("utf-8"), settings.ADMIN_PASSWORD.encode("utf-8")
-    )
+from .authentication import get_request_role, get_request_username
 
 
 def is_admin_request(request) -> bool:
-    return bool(request.session.get(ADMIN_SESSION_KEY))
+    return bool(get_request_username(request)) and get_request_role(request) == "admin"
 
 
 def admin_required(view_func):
-    """JSON/AJAX version — for the remove-user endpoint."""
+    """JSON/AJAX version — for the admin-only API endpoints."""
 
     @functools.wraps(view_func)
     def wrapper(request, *args, **kwargs):
@@ -61,14 +34,17 @@ def admin_required(view_func):
 
 
 def admin_page_required(view_func):
-    """Page version — for the admin dashboard. Redirects to the shared
-    /login/ page (not a separate admin login route — the role choice lives
-    on that one form) rather than showing an error page."""
+    """Page version — for the admin dashboard. An anonymous request is sent
+    to the shared /login/ page; an authenticated-but-non-admin one is sent
+    to the regular chat index rather than back to /login/, which would
+    otherwise loop since they're already logged in."""
 
     @functools.wraps(view_func)
     def wrapper(request, *args, **kwargs):
-        if not is_admin_request(request):
+        if not get_request_username(request):
             return HttpResponseRedirect(reverse("login"))
+        if get_request_role(request) != "admin":
+            return HttpResponseRedirect(reverse("index"))
         return view_func(request, *args, **kwargs)
 
     return wrapper

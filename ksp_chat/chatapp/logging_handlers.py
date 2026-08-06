@@ -86,10 +86,18 @@ class RequestContextFilter(logging.Filter):
     against that exact logger name."""
 
     def filter(self, record):
-        record.username = current_username.get() or UNATTRIBUTED
+        # A call site can pass username/user_id via extra= to override the
+        # ContextVar — middleware.py's request_completed log line does this,
+        # since by the time it logs, the inner JWTAuthenticationMiddleware's
+        # own `finally` block has already reset these ContextVars back to
+        # their prior value (see that middleware's comment). Every other
+        # call site in the app doesn't pass these, so falls through to the
+        # ContextVar exactly as before.
+        record.username = getattr(record, "username", None) or current_username.get() or UNATTRIBUTED
+        explicit_user_id = getattr(record, "user_id", None)
+        record.user_id = explicit_user_id if explicit_user_id is not None else current_user_id.get()
         record.request_id = current_request_id.get()
         record.correlation_id = current_correlation_id.get()
-        record.user_id = current_user_id.get()
         record.endpoint = current_endpoint.get()
         record.method = current_method.get()
         return True

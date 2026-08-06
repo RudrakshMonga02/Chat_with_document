@@ -27,6 +27,27 @@ ALLOWED_HOSTS = [
     h.strip() for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if h.strip()
 ]
 
+# The API gateway (api-gateway/, a separate process) forwards requests here
+# from its own address — the browser's Origin header says the gateway's
+# origin (e.g. http://127.0.0.1:8081), but this process's own host:port is
+# whatever it's actually bound to (e.g. 127.0.0.1:8000). Django's CSRF
+# middleware checks the Origin header against request.get_host() for every
+# POST/PUT/PATCH/DELETE and rejects a mismatch — without this, that's every
+# such request a real browser sends through the gateway (login, logout,
+# create-user, rename/delete session, ...), since curl/requests-based
+# testing never sends an Origin header and so never exercises this check at
+# all. Comma-separated so a deployment behind a different gateway origin can
+# override it without a code change.
+#
+# The gateway's default is 8081, not 8080 — something on this machine
+# (never identified; likely security/proxy software) transparently
+# intercepts port 8080 and serves stale responses that never reflect a
+# running process's real code, regardless of restarts. See api-gateway's
+# own README for how this was diagnosed.
+CSRF_TRUSTED_ORIGINS = [
+    o.strip() for o in os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', 'http://127.0.0.1:8081').split(',') if o.strip()
+]
+
 INSTALLED_APPS = [
     'daphne',
     'django.contrib.admin',
@@ -125,15 +146,6 @@ AUTH_SERVICE_BASE_URL = os.environ.get('AUTH_SERVICE_BASE_URL', 'http://127.0.0.
 # will start rejecting any token not meant for this app specifically.
 AUTH_JWT_EXPECTED_ISS = os.environ.get('AUTH_JWT_EXPECTED_ISS', '')
 AUTH_JWT_EXPECTED_AUD = os.environ.get('AUTH_JWT_EXPECTED_AUD', '')
-
-# A single hardcoded admin identity (see chatapp/admin_auth.py) — deliberately
-# NOT part of the AUTH_JWT_* system above: never issued by the auth service,
-# never tied to an AppUser row, never created through registration. Left
-# unset, both default to '' and check_admin_credentials() always returns
-# False, so the admin area is simply unreachable rather than exposed with an
-# empty username/password.
-ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', '')
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', '')
 
 # Django's own built-in admin site (/admin/, django.contrib.admin) is a
 # THIRD identity system alongside the two above — django.contrib.auth's own

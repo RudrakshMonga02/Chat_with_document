@@ -14,8 +14,8 @@ urlpatterns = [
     path("login/", auth_views.login_view, name="login"),
     path("register/", auth_views.register_view, name="register"),
     path("logout/", auth_views.logout_view, name="logout"),
-    # Admin area — separate identity system, separate views module.
+    # Admin area — same JWT identity as everywhere else, gated by role.
     path("users/", admin_views.admin_users_page, name="admin_users_page"),
+    path("users/create/", admin_views.create_user, name="create_user"),
     path("users/<str:username>/", admin_views.remove_user, name="remove_user"),
-    path("admin-logout/", admin_views.admin_logout_view, name="admin_logout"),
 ]

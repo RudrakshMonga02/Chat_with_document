@@ -15,10 +15,6 @@ from django.db import models
 
 
 class AppUser(models.Model):
-    # No role field — every AppUser row is a regular chat-app user. Admin is
-    # a single hardcoded identity (settings.ADMIN_USERNAME/PASSWORD, see
-    # chatapp/admin_auth.py) that never goes through this table at all, so
-    # there's nothing here to distinguish.
     username = models.CharField(max_length=150, unique=True, db_index=True)
     # Immutable IdP-issued identifier — groundwork for the day the external
     # auth service's JWT starts carrying one (see
@@ -34,6 +30,18 @@ class AppUser(models.Model):
     # that token here — same name/convention as django.contrib.auth's own
     # User.is_active, used the same way (soft-disable, not a real delete).
     is_active = models.BooleanField(default=True)
+    # A cached copy of the auth service's own `role` JWT claim — that
+    # service is the source of truth, this is just a local shadow so
+    # admin_views.admin_users_page can display it without an extra network
+    # call. Kept fresh by JWTAuthenticationMiddleware/auth_views.login_view
+    # on every request/login that carries a token for this user.
+    # admin_views.create_user also sets this (always to ROLE_USER, eagerly,
+    # before the new account has ever logged in) — see that view's own
+    # comment for why it's hardcoded rather than read from the request.
+    ROLE_USER = "user"
+    ROLE_ADMIN = "admin"
+    ROLE_CHOICES = [(ROLE_USER, "User"), (ROLE_ADMIN, "Admin")]
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default=ROLE_USER)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

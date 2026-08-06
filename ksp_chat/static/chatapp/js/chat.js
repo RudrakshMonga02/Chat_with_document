@@ -9,10 +9,18 @@ function getCsrfToken() {
 // ── Auth ─────────────────────────────────────────────────────────────────────
 // A 401 means the token expired or was revoked mid-session (e.g. logged out
 // in another tab) — bounce to the login page rather than showing a raw
-// "Authentication required" error inside the chat window.
+// "Authentication required" error inside the chat window. A 403 means an
+// admin-role account reached a chat endpoint it's not allowed to use (e.g.
+// a tab left open from before being promoted to admin) — "/" redirects an
+// admin straight to /users/ server-side, so sending them there resolves it
+// the same way a fresh page load would.
 function redirectIfUnauthorized(res) {
     if (res.status === 401) {
         window.location.href = "/login/";
+        return true;
+    }
+    if (res.status === 403) {
+        window.location.href = "/";
         return true;
     }
     return false;
